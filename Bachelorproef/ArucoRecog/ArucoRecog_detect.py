@@ -57,6 +57,17 @@ def insertcoord(x,y,z,servo, home = 0, handleMessage=None):
         ser.flush()
     except:
         print('Sending command over serial failed...')
+
+./ArucoRecog_detect.py 
+./ArucoRecog_detect.py: line 5: import: command not found
+./ArucoRecog_detect.py: line 6: import: command not found
+./ArucoRecog_detect.py: line 7: import: command not found
+./ArucoRecog_detect.py: line 8: from: command not found
+./ArucoRecog_detect.py: line 10: ser: command not found
+./ArucoRecog_detect.py: line 11: listen_thread: command not found
+./ArucoRecog_detect.py: line 14: syntax error near unexpected token `('
+./ArucoRecog_detect.py: line 14: `def initSerial(handleMessage=None):     #serialcommunication from professor Jan Lemeire'
+
 """
 
 
