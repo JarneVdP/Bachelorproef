@@ -10,7 +10,7 @@ from threading import Thread
 ser = None
 listen_thread = None
 
-
+"""
 def initSerial(handleMessage=None):     #serialcommunication from professor Jan Lemeire
     global ser, listen_thread   
     try:        
@@ -43,7 +43,7 @@ def listen(handleMessage=None):
     ser.close()
 
 
-""" test code
+ test code
 def insertcoord(x,y,z,servo, home = 0, handleMessage=None):
     global ser
     if ser is None:
@@ -57,6 +57,17 @@ def insertcoord(x,y,z,servo, home = 0, handleMessage=None):
         ser.flush()
     except:
         print('Sending command over serial failed...')
+
+./ArucoRecog_detect.py 
+./ArucoRecog_detect.py: line 5: import: command not found
+./ArucoRecog_detect.py: line 6: import: command not found
+./ArucoRecog_detect.py: line 7: import: command not found
+./ArucoRecog_detect.py: line 8: from: command not found
+./ArucoRecog_detect.py: line 10: ser: command not found
+./ArucoRecog_detect.py: line 11: listen_thread: command not found
+./ArucoRecog_detect.py: line 14: syntax error near unexpected token `('
+./ArucoRecog_detect.py: line 14: `def initSerial(handleMessage=None):     #serialcommunication from professor Jan Lemeire'
+
 """
 
 
@@ -123,7 +134,7 @@ def arucorec():
                 cv2.line(img, bottomRight, bottomLeft, (0, 255, 0), 2)
                 cv2.line(img, bottomLeft, topLeft, (0, 255, 0), 2)
 
-        """ Communication of aruco tag  """
+        """ Communication of aruco tag  
         global ser
         if ser is None:
             print('Initialization of serial connection.')
@@ -137,7 +148,7 @@ def arucorec():
             ser.flush()
         except:
             print('Sending command over serial failed...')
-
+        """
 
         # Display the resulting frame
         cv2.imshow('frame', img)
@@ -145,19 +156,20 @@ def arucorec():
         # handler to press the "q" key to exit the program
         if cv2.waitKey(1) & 0xFF == ord('q'):
             break
-
+        
 
     # When everything done, release the capture
     camera.release()
     cv2.destroyAllWindows()
+    return markerIds[0]
 
 
 if __name__ == '__main__':
-    #ser = serial.Serial('/dev/ttyACM0', 1000000, timeout=1)
-    #ser.flush()
-    #time.sleep(12)
-    arucorec()
-    #insertcoord(22, 0, 0, 60, 0)
-    #insertcoord(25, 1, 0, 60, 0)
-    continueListening = False
-    listen_thread.join()
+    int id = arucorec()
+    ser = serial.Serial('/dev/ttyACM0', 9600, timeout=1)
+    ser.reset_input_buffer()
+    while True:
+        ser.write(b"ID", id \n")
+        line = ser.readline().decode('utf-8').rstrip()
+        print(line)
+        time.sleep(1)
