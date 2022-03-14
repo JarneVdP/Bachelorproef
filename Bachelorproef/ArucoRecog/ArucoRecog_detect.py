@@ -1,78 +1,9 @@
-### recognize tags and FOR NOW send the tag ID to promicro
-
+#!/usr/bin/env python3
 
 # import the OpenCV library for computer vision
 import cv2
 import serial
 import time
-from threading import Thread
-
-ser = None
-listen_thread = None
-
-"""
-def initSerial(handleMessage=None):     #serialcommunication from professor Jan Lemeire
-    global ser, listen_thread   
-    try:        
-        ser = serial.Serial('/dev/ttyACM0', 9600, timeout=1)
-    except:
-        ser = None
-        print('serial connection could not be started')
-        return
-    ser.flush()
-    print('serial connection started')
-    listen_thread = Thread(target = listen, args = [handleMessage])
-    listen_thread.start()
-
-continueListening = True
-def listen(handleMessage=None):
-    global ser, continueListening
-    #prev_msg = ''
-    while continueListening:
-        line = str( ser.readline() ) #.decode('utf-8').rstrip()
-        #msg = str(line) # 
-        msg = line[2:len(line)-5]
-        # prev_msg != msg:
-        if msg is not None and len(msg) > 2:
-            #print(msg)
-        #prev_msg = msg
-            if callable(handleMessage):
-                handleMessage(msg)
-        time.sleep(0.01)
-    print('Finished listening. Closing serial.')
-    ser.close()
-
-
- test code
-def insertcoord(x,y,z,servo, home = 0, handleMessage=None):
-    global ser
-    if ser is None:
-        print('Initialization of serial connection.')
-        initSerial(handleMessage)
-        if ser is not None:
-            time.sleep(25)
-
-    try:
-        ser.write(bytes(""+str(x)+";"+str(y)+";"+str(z)+";"+str(servo)+";"+str(home)+" \n", 'utf-8'))
-        ser.flush()
-    except:
-        print('Sending command over serial failed...')
-
-./ArucoRecog_detect.py 
-./ArucoRecog_detect.py: line 5: import: command not found
-./ArucoRecog_detect.py: line 6: import: command not found
-./ArucoRecog_detect.py: line 7: import: command not found
-./ArucoRecog_detect.py: line 8: from: command not found
-./ArucoRecog_detect.py: line 10: ser: command not found
-./ArucoRecog_detect.py: line 11: listen_thread: command not found
-./ArucoRecog_detect.py: line 14: syntax error near unexpected token `('
-./ArucoRecog_detect.py: line 14: `def initSerial(handleMessage=None):     #serialcommunication from professor Jan Lemeire'
-
-"""
-
-
-
-
 
 def arucorec():
     """  Aruco code   """
@@ -103,14 +34,22 @@ def arucorec():
 
         # draw box around aruco marker within camera frame
         img = cv2.aruco.drawDetectedMarkers(img, markerCorners, markerIds)
-
+        
         # if a tag is found...
         if markerIds is not None:
+            """ Arduino communication send and receive(to see if what has been sent is correct). Probably chgange it to send the distances + markerId every (half) second"""
+            ser = serial.Serial('/dev/ttyACM0', 9600, timeout=1)
+            ser.reset_input_buffer()
+            ser.write('{}'.format(markerIds).encode())
+            #ser.flush()
+            line = ser.readline().decode('utf-8').rstrip()
+            print(line)
+            
+            """
             # for every tag in the array of detected tags...
             for i in range(len(markerIds)):
 
-                print(markerIds[0])
-
+                #print(markerIds[0], markerIds)
                 # get the center point of the tag
                 center = markerCorners[i][0]
                 M = cv2.moments(center)
@@ -133,22 +72,7 @@ def arucorec():
                 cv2.line(img, topRight, bottomRight, (0, 255, 0), 2)
                 cv2.line(img, bottomRight, bottomLeft, (0, 255, 0), 2)
                 cv2.line(img, bottomLeft, topLeft, (0, 255, 0), 2)
-
-        """ Communication of aruco tag  
-        global ser
-        if ser is None:
-            print('Initialization of serial connection.')
-            handleMessage=None
-            initSerial(handleMessage)
-            #initSerial()
-            if ser is not None:
-                time.sleep(25)
-        try:
-            ser.write(markerIds[0])
-            ser.flush()
-        except:
-            print('Sending command over serial failed...')
-        """
+            """
 
         # Display the resulting frame
         cv2.imshow('frame', img)
@@ -164,12 +88,6 @@ def arucorec():
     return markerIds[0]
 
 
+
 if __name__ == '__main__':
-    int id = arucorec()
-    ser = serial.Serial('/dev/ttyACM0', 9600, timeout=1)
-    ser.reset_input_buffer()
-    while True:
-        ser.write(b"ID", id \n")
-        line = ser.readline().decode('utf-8').rstrip()
-        print(line)
-        time.sleep(1)
+    arucorec()
