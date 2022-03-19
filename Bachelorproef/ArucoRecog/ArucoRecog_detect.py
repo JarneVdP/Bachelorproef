@@ -3,7 +3,8 @@
 # import the OpenCV library for computer vision
 import cv2
 import serial
-import time
+import time, sys, math
+import numpy as np
 
 def arucorec():
     """  Aruco code   """
@@ -44,13 +45,10 @@ def arucorec():
             #ser.flush()
             line = ser.readline().decode('utf-8').rstrip()
             print(line)
-            
-            """
-            # for every tag in the array of detected tags...
-            for i in range(len(markerIds)):
 
-                #print(markerIds[0], markerIds)
-                # get the center point of the tag
+            #print(markerIds[0], markerIds)
+            for i in range(len(markerIds)):
+            # get the center point of the tag
                 center = markerCorners[i][0]
                 M = cv2.moments(center)
                 cX = int(M["m10"] / M["m00"])
@@ -60,6 +58,11 @@ def arucorec():
                 # writes the coordinates of the center of the tag
                 cv2.putText(img, str(cX) + "," + str(cY), (cX + 40, cY - 40), cv2.FONT_HERSHEY_COMPLEX, 0.7,
                             (0, 255, 0), 2)
+            
+            """
+            # for every tag in the array of detected tags...
+            for i in range(len(markerIds)):
+
                 (topLeft, topRight, bottomRight, bottomLeft) = markerCorners[i][0]
                 # convert each of the (x, y)-coordinate pairs to integers
                 topRight = (int(topRight[0]), int(topRight[1]))
