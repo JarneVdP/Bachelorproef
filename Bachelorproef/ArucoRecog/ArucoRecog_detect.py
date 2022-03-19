@@ -53,13 +53,13 @@ def arucorec():
                 M = cv2.moments(center)
                 cX = int(M["m10"] / M["m00"])
                 cY = int(M["m01"] / M["m00"])
-                # draws a red dot on the marker center
-                cv2.circle(img, (cX, cY), 1, (0, 0, 255), 8)
                 # writes the coordinates of the center of the tag
-                cv2.putText(img, str(cX) + "," + str(cY), (cX + 40, cY - 40), cv2.FONT_HERSHEY_COMPLEX, 0.7,
-                            (0, 255, 0), 2)
+                cv2.putText(img,"x:"+ str(cX) + ", y:" + str(cY), (cX, cY), cv2.FONT_HERSHEY_TRIPLEX, 0.7,
+                            (0, 255, 0), 2) #center cX + 40, cY - 40, we use 50 mm markers ,(cX-25, cY-25)
             
             """
+            # draws a red dot on the marker center
+            #cv2.circle(img, (cX, cY), 1, (0, 0, 255), 8)
             # for every tag in the array of detected tags...
             for i in range(len(markerIds)):
 
