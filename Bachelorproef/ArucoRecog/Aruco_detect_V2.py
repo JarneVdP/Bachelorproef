@@ -15,7 +15,6 @@ def isRotationMatrix(R) :
     return n < 1e-6
 
 # Calculates rotation matrix to euler angles
-# The result is the same as MATLAB except the order
 # of the euler angles ( x and z are swapped ).
 def rotationMatrixToEulerAngles(R) :
 
@@ -45,7 +44,7 @@ def sendserial(idTag, x, y, heading):
     print(line)
     time.sleep(1)
 
-marker_size = 75        #might have to change this to a different value
+marker_size = 50        
 with open('camera_cal.npy', 'rb') as f:
     camera_matrix = np.load(f)
     camera_distortion = np.load(f)
