@@ -1,10 +1,3 @@
-/* Encoder Library - TwoKnobs Example
- * http://www.pjrc.com/teensy/td_libs_Encoder.html
- *
- * This example code is in the public domain.
- */
- 
- // Deze
 // 0, 1, 2, 3, 7  - micro/leonardo interrupt
 // Y positie mogelijks niet helemaal correct. Dan forward offset aanpassen.
 // Testen met motoraansturing.
@@ -39,9 +32,8 @@ int trackwidth = 28; //cm, breedte tussen 2 wielen
 int wheelradius = 3; //cm , straal
 int ticksPsec = 1600; //ticks per second
 double cmPerTick = 2.0 * 3.14159265 * wheelradius / ticksPsec;
-float heading;  //Wordt gebruikt op https://gm0.org/en/latest/docs/software/odometry.html?highlight=odometry
-// In addition to the linear position, the robot has a heading  defined as the angle between the front of the robot and the global  axis. 
-  
+float heading;  //Wordt gebruikt op https://gm0.org/en/latest/docs/software/odometry.html?highlight=odometry  hoek van de robot
+
 void loop() {
   odometry();
 }
