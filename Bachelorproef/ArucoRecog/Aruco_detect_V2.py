@@ -35,7 +35,7 @@ def rotationMatrixToEulerAngles(R) :
 
 
 
-marker_size = 50        #might have to change this to a different value
+marker_size = 75        #might have to change this to a different value
 with open('camera_cal.npy', 'rb') as f:
     camera_matrix = np.load(f)
     camera_distortion = np.load(f)
