@@ -1,7 +1,10 @@
 #!/usr/bin/env python3
 from matplotlib.pyplot import gray
 import numpy as np
-import cv2, math
+import cv2, math, time, serial
+import datetime as dt
+
+t = dt.datetime.now()
 
 # Checks if a matrix is a valid rotation matrix.    https://learnopencv.com/rotation-matrix-to-euler-angles/
 def isRotationMatrix(R) :
@@ -33,7 +36,14 @@ def rotationMatrixToEulerAngles(R) :
 
     return np.array([x, y, z])
 
-
+def sendserial(idTag, x, y, heading):
+    ser = serial.Serial('/dev/ttyACM0', 9600, timeout=1)
+    ser.reset_input_buffer()
+    #while True:
+    ser.write(str.encode("id=%s, x=%s,y=%s,angle=%s\n" % (idTag[0],realworld_tvec[0], realworld_tvec[1], math.degrees(yaw))))
+    line = ser.readline().decode('utf-8').rstrip()
+    print(line)
+    time.sleep(1)
 
 marker_size = 75        #might have to change this to a different value
 with open('camera_cal.npy', 'rb') as f:
@@ -78,10 +88,17 @@ while True:
 
         pitch, roll, yaw = rotationMatrixToEulerAngles(rotation_matrix)
 
-        tvec_str = "x=%4.0f  y=%4.0f  dir=%4.0f"%(realworld_tvec[0], realworld_tvec[1], math.degrees(yaw))
+        tvec_str = "id=%s x=%4.0f  y=%4.0f  dir=%4.0f"%(ids, realworld_tvec[0], realworld_tvec[1], math.degrees(yaw))
         cv2.putText(frame, tvec_str, (20, 460), cv2.FONT_HERSHEY_TRIPLEX, 0.7, (0, 0, 255), 2)
+        
+        # If ten second passes, send coordinates
+        delta = dt.datetime.now()-t
+        if delta.seconds >= 10:
+            sendserial(ids, realworld_tvec[0], realworld_tvec[1], math.degrees(yaw))
+            t = dt.datetime.now()
 
     cv2.imshow('frame', frame)
+    
 
     key = cv2.waitKey(1) & 0xFF
     if key == ord('q'):
