@@ -1,6 +1,6 @@
 {
     "board": "arduino:avr:micro",
     "programmer": "arduino:avrisp",
-    "sketch": "Bachelorproef\\BachelorproefMainUno\\BachelorproefMainUno.ino",
+    "sketch": "Bachelorproef\\BachelorproefMainUno\\Odometer.ino",
     "port": "COM8"
 }
