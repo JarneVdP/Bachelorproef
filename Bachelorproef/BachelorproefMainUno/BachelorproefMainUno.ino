@@ -5,6 +5,14 @@
 
 int x_ard, y_ard, heading_ard, id_ard;
 
+int x_destination[] = {0};
+int y_destination[] = {0};
+int heading_destination[] = {0};
+
+int x_offset, y_offset = 0;
+
+int samplestored[5];
+int numberofsamplestored = 0;
 
 void setup() {
   Serial.begin(9600);
@@ -22,8 +30,5 @@ void loop() {
 }
 
 // Timer 90 seconden
-// posities x, y heading om af te zetten
-// offset_x offset_y van de robotarm
-// opslaan wat is ingeladen 
-//Start indien niets gevonden wordt
-
+// Start indien niets gevonden wordt
+// Wanneer iets gedropt is, niet direct opnieuw targeten met de camera!

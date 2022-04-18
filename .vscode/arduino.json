@@ -1,6 +1,6 @@
 {
     "board": "arduino:avr:micro",
     "programmer": "arduino:avrisp",
-    "sketch": "Bachelorproef\\BachelorproefMainUno\\Odometer.ino",
+    "sketch": "Bachelorproef\\BachelorproefMainUno\\ServoGrabberDropper.ino",
     "port": "COM8"
 }
