@@ -20,18 +20,18 @@ double newLeft, newRight, newFront, prev_positionLeft, prev_positionRight, prev_
 double delta_positionLeft, delta_positionRight, delta_positionFront;
 float theta, deltatheta = 0;
 double dx, dy;
-double delta_x, delta_y, x_pos, y_pos;
+//double delta_x, delta_y, x_pos, y_pos;
 
 int forward_offset = 15;//20; //cm
 int trackwidth = 28; //cm, breedte tussen 2 wielen 
 int wheelradius = 3; //cm , straal
 int ticksPsec = 1600; //ticks per second
 double cmPerTick = 2.0 * 3.14159265 * wheelradius / ticksPsec;
-float heading;  //Wordt gebruikt op https://gm0.org/en/latest/docs/software/odometry.html?highlight=odometry  hoek van de robot
+//float heading;  //Wordt gebruikt op https://gm0.org/en/latest/docs/software/odometry.html?highlight=odometry  hoek van de robot
 
 
 
-void odometry(){
+void odometry(PositionStruct &Position) {
   //currentposition based on encoder readings
   newLeft = -1 * knobLeft.read();
   newRight = -1* knobRight.read();
@@ -59,25 +59,25 @@ void odometry(){
   dy = cmPerTick * (delta_positionFront - forward_offset * (delta_positionRight - delta_positionLeft) / trackwidth);
 
   //new position
-  x_pos += dx * cos(theta) - dy * sin(theta); //sin and cos in radians
-  y_pos += dx * sin(theta) + dy * cos(theta);
+  Position.x_pos += dx * cos(theta) - dy * sin(theta); //sin and cos in radians
+  Position.y_pos += dx * sin(theta) + dy * cos(theta);
   //heading += heading + (deltatheta/float(2));
-  heading += deltatheta;
-  if (heading < -6.2831853072){  //6.2831853072 = 360 degrees
-    heading += 6.2831853072;}
+  Position.heading += deltatheta;
+  if (Position.heading < -6.2831853072){  //6.2831853072 = 360 degrees
+    Position.heading += 6.2831853072;}
     
-  if (heading > 6.2831853072){  //6.2831853072 = 360 degrees
-    heading -= 6.2831853072;}
+  if (Position.heading > 6.2831853072){  //6.2831853072 = 360 degrees
+    Position.heading -= 6.2831853072;}
 
   //print current position
   if(newLeft != prev_positionLeft || newRight != prev_positionRight || newFront != prev_positionFront){
     Serial.print("X pos = ");
-    Serial.print(x_pos);
+    Serial.print(Position.x_pos);
     Serial.print(", Y pos = ");
-    Serial.print(y_pos);
+    Serial.print(Position.y_pos);
     Serial.print(", Heading = ");
-    Serial.print(heading); Serial.print("   ");
-    Serial.print(heading * 180/ 3.14159265358979);
+    Serial.print(Position.heading); Serial.print("   ");
+    Serial.print(Position.heading * 180/ 3.14159265358979);
     Serial.println();
   }
 
@@ -93,6 +93,6 @@ void odometry(){
     knobLeft.write(0);
     knobRight.write(0);
     knobFront.write(0);
-    heading = 0;
+    Position.heading = 0;
   }
 }

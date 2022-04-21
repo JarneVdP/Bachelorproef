@@ -16,6 +16,7 @@ void SerialCommunication() {
     Serial.print(id_ard);
     Serial.print(" & ");
     Serial.print(x_ard);
+    Serial.print(Position.x_pos); //to test
     Serial.print(" & ");
     Serial.print(y_ard);
     Serial.print(" & ");

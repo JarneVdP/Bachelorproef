@@ -1,6 +1,6 @@
 {
     "board": "arduino:avr:micro",
     "programmer": "arduino:avrisp",
-    "sketch": "Bachelorproef\\BachelorproefMainUno\\ServoGrabberDropper.ino",
+    "sketch": "Bachelorproef\\BachelorproefMainUno\\BachelorproefMainUno.ino",
     "port": "COM8"
 }
