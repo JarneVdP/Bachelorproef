@@ -11,6 +11,12 @@ Encoder knobLeft(0, 1); //white/white - pink/green
 Encoder knobRight(2, 3); //white/white - orange/green
 Encoder knobFront(6, 7); //yellow/white - purple/green
 
+//Mega
+/*
+Encoder knobLeft(2, 3); //white/white - pink/green
+Encoder knobRight(18, 19); //white/white - orange/green
+Encoder knobFront(20, 21); //yellow/white - purple/green
+*/
 
 int positionLeft  = 1;
 int positionRight = 1;
@@ -33,9 +39,9 @@ double cmPerTick = 2.0 * 3.14159265 * wheelradius / ticksPsec;
 
 void odometry(PositionStruct &Position) {
   //currentposition based on encoder readings
-  newLeft = -1 * knobLeft.read();
-  newRight = -1* knobRight.read();
-  newFront = knobFront.read();
+  newLeft = knobLeft.read();
+  newRight = -1 * knobRight.read();
+  newFront = -1 * knobFront.read();
 
   //print encoder rotations
     if(newLeft != prev_positionLeft || newRight != prev_positionRight || newFront != prev_positionFront){
