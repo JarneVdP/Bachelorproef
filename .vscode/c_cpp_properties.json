@@ -18,6 +18,9 @@
             "includePath": [
                 "C:\\Users\\jarne\\AppData\\Local\\Arduino15\\packages\\arduino\\hardware\\avr\\1.8.5\\cores\\arduino",
                 "C:\\Users\\jarne\\AppData\\Local\\Arduino15\\packages\\arduino\\hardware\\avr\\1.8.5\\variants\\micro",
+                "C:\\Users\\jarne\\AppData\\Local\\Arduino15\\packages\\arduino\\hardware\\avr\\1.8.5\\libraries\\SoftwareSerial\\src",
+                "C:\\Users\\jarne\\OneDrive - Vrije Universiteit Brussel\\Documents\\Arduino\\libraries\\Makeblock-Libraries-master\\src",
+                "C:\\Users\\jarne\\OneDrive - Vrije Universiteit Brussel\\Documents\\Arduino\\libraries\\AccelStepper\\src",
                 "C:\\Users\\jarne\\OneDrive - Vrije Universiteit Brussel\\Documents\\Arduino\\libraries\\Encoder",
                 "c:\\program files (x86)\\arduino\\hardware\\tools\\avr\\lib\\gcc\\avr\\7.3.0\\include",
                 "c:\\program files (x86)\\arduino\\hardware\\tools\\avr\\lib\\gcc\\avr\\7.3.0\\include-fixed",
