@@ -39,7 +39,8 @@ def sendserial(idTag, x, y, heading):
     ser = serial.Serial('/dev/ttyACM0', 9600, timeout=1)
     ser.reset_input_buffer()
     #while True:
-    ser.write(str.encode("id=%s, x=%s,y=%s,angle=%s\n" % (idTag[0],realworld_tvec[0], realworld_tvec[1], math.degrees(yaw))))
+    ser.write(str.encode("%d;%d;%d;%d\n" % (idTag[0][0],realworld_tvec[0], realworld_tvec[1], math.degrees(yaw))))
+    #ser.write(str.encode("%s;%s;%s\n" % (idTag[0][0], realworld_tvec[1], math.degrees(yaw))))
     line = ser.readline().decode('utf-8').rstrip()
     print(line)
     time.sleep(1)
@@ -64,7 +65,7 @@ cap.set(5, camera_frame_rate)
 
 while True:
     ret, frame = cap.read()
-    frame = cv2.rotate(frame, cv2.ROTATE_180)
+    #frame = cv2.rotate(frame, cv2.ROTATE_180)
 
     gray_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
 
@@ -92,7 +93,7 @@ while True:
         
         # If ten second passes, send coordinates
         delta = dt.datetime.now()-t
-        if delta.seconds >= 10:
+        if delta.seconds >= 2:
             sendserial(ids, realworld_tvec[0], realworld_tvec[1], math.degrees(yaw))
             t = dt.datetime.now()
 
@@ -105,6 +106,11 @@ while True:
 
 cap.release()
 cv2.destroyAllWindows
+
+""" rijden totdat x = 0 <= gecenterd voor de sample"""
+"""rijden totdat y = ..."""
+""" op dit moment nog niet teveel naar de angle kijken van de camera, enkel naar de angle van de encoderes om zichzelf recht te zetten."""
+
 
 """ get real world pose from aruco marker """ 
 """ https://www.youtube.com/watch?v=cIVZRuVdv1o """
