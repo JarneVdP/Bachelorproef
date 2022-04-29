@@ -65,8 +65,14 @@ void odometry(PositionStruct &Position) {
   dy = cmPerTick * (delta_positionFront - forward_offset * (delta_positionRight - delta_positionLeft) / trackwidth);
 
   //new position
-  Position.x_pos += dx * cos(theta) - dy * sin(theta); //sin and cos in radians
-  Position.y_pos += dx * sin(theta) + dy * cos(theta);
+  if (Position.heading > (-90* 3.14159265 / 180) && Position.heading < (90* 3.14159265 / 180)) {
+    Position.x_pos += dx * cos(theta) - dy * sin(theta); //sin and cos in radians
+    Position.y_pos += dx * sin(theta) + dy * cos(theta);
+  }
+  else if (Position.heading < (-90* 3.14159265 / 180) || Position.heading > (90* 3.14159265 / 180)) {
+    Position.x_pos -= dx * cos(theta) - dy * sin(theta); //sin and cos in radians
+    Position.y_pos -= dx * sin(theta) + dy * cos(theta);
+  } 
   //heading += heading + (deltatheta/float(2));
   Position.heading += deltatheta;
   if (Position.heading < -6.2831853072){  //6.2831853072 = 360 degrees
