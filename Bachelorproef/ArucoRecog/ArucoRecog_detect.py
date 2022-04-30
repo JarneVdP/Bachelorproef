@@ -6,6 +6,9 @@ import serial
 import time, sys, math
 import numpy as np
 
+camera_width = 640
+camera_height = 480
+
 def arucorec():
     """  Aruco code   """
     # Load the dictionary that was used to generate the markers.
@@ -39,12 +42,12 @@ def arucorec():
         # if a tag is found...
         if markerIds is not None:
             """ Arduino communication send and receive(to see if what has been sent is correct). Probably chgange it to send the distances + markerId every (half) second"""
-            ser = serial.Serial('/dev/ttyACM0', 9600, timeout=1)
-            ser.reset_input_buffer()
-            ser.write('{}'.format(markerIds).encode())
+            #ser = serial.Serial('/dev/ttyACM0', 9600, timeout=1)
+            #ser.reset_input_buffer()
+            #ser.write('{}'.format(markerIds).encode())
             #ser.flush()
-            line = ser.readline().decode('utf-8').rstrip()
-            print(line)
+            #line = ser.readline().decode('utf-8').rstrip()
+            #print(line)
 
             #print(markerIds[0], markerIds)
             for i in range(len(markerIds)):

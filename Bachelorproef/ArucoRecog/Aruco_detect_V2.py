@@ -65,7 +65,7 @@ cap.set(5, camera_frame_rate)
 
 while True:
     ret, frame = cap.read()
-    #frame = cv2.rotate(frame, cv2.ROTATE_180)
+    frame = cv2.rotate(frame, cv2.ROTATE_180)
 
     gray_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
 
@@ -88,7 +88,15 @@ while True:
 
         pitch, roll, yaw = rotationMatrixToEulerAngles(rotation_matrix)
 
-        tvec_str = "id=%s x=%4.0f  y=%4.0f  dir=%4.0f"%(ids, realworld_tvec[0], realworld_tvec[1], math.degrees(yaw))
+        for i in range(len(ids)):
+            # get the center point of the tag
+            center = corners[i][0]
+            M = cv2.moments(center)
+            cX = int(M["m10"] / M["m00"])
+            cY = int(M["m01"] / M["m00"])
+
+        tvec_str = "id=%s x=%4.0f  y=%4.0f  dir=%4.0f"%(ids, tvec_flipped[0], realworld_tvec[1], math.degrees(yaw))
+        #tvec_str = "id=%s x=%4.0f  y=%4.0f  dir=%4.0f"%(ids, cX, cY, math.degrees(yaw))
         cv2.putText(frame, tvec_str, (20, 460), cv2.FONT_HERSHEY_TRIPLEX, 0.7, (0, 0, 255), 2)
         
         # If ten second passes, send coordinates
