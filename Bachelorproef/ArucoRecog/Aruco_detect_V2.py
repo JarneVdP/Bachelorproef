@@ -38,9 +38,7 @@ def rotationMatrixToEulerAngles(R) :
 def sendserial(idTag, x, y, heading):
     ser = serial.Serial('/dev/ttyACM0', 9600, timeout=1)
     ser.reset_input_buffer()
-    #while True:
-    ser.write(str.encode("%d;%d;%d;%d\n" % (idTag[0][0],realworld_tvec[0], realworld_tvec[1], math.degrees(yaw))))
-    #ser.write(str.encode("%s;%s;%s\n" % (idTag[0][0], realworld_tvec[1], math.degrees(yaw))))
+    ser.write(str.encode("%d;%d;%d;%d\n" % (idTag[0][0],x, y, heading)))
     line = ser.readline().decode('utf-8').rstrip()
     print(line)
     time.sleep(1)
@@ -95,6 +93,12 @@ while True:
         #realworld_tvec[0] : x coördinaat
         #realworld_tvec[1] : y coördinaat
 
+        # to do: distance calibration
+        #to do: angle calibration
+
+        distance = math.sqrt(realworld_tvec[0]**2 + realworld_tvec[1]**2) #te testen
+        angle = math.atan2(realworld_tvec[1], realworld_tvec[0])    #te testen
+
         if math.degrees(yaw) > 0.0 and math.degrees(yaw) < 90.0:
             send_x = realworld_tvec[1]
             send_y = realworld_tvec[0]
@@ -102,15 +106,15 @@ while True:
         if math.degrees(yaw) > 90.0 and math.degrees(yaw) < 180.0:
             send_x = realworld_tvec[0]
             send_y = realworld_tvec[1]
-            send_heading = math.degrees(yaw) - 90
-        if math.degrees(yaw) < 0.0 and math.degrees(yaw) < -90.0:
+            send_heading = math.degrees(yaw) 
+        if math.degrees(yaw) < 0.0 and math.degrees(yaw) > -90.0:
             send_x = -realworld_tvec[0]
             send_y = -realworld_tvec[1]
             send_heading = math.degrees(yaw)
-        if math.degrees(yaw) < -90.0 and math.degrees(yaw) < -180.0:
-            send_x = -realworld_tvec[1]
+        if math.degrees(yaw) < -90.0 and math.degrees(yaw) > -180.0:
+            send_x = realworld_tvec[1]
             send_y = -realworld_tvec[0]
-            send_heading = math.degrees(yaw) + 90   
+            send_heading = math.degrees(yaw) 
         
         for i in range(len(ids)):
             # get the center point of the tag
@@ -122,10 +126,10 @@ while True:
         tvec_str = "id=%s x=%4.0f  y=%4.0f  dir=%4.0f"%(ids, send_x, send_y, send_heading)
         cv2.putText(frame, tvec_str, (20, 460), cv2.FONT_HERSHEY_TRIPLEX, 0.7, (0, 0, 255), 2)
         
-        # If ten second passes, send coordinates
+        # If two seconds pass, send coordinates
         delta = dt.datetime.now()-t
         if delta.seconds >= 2:
-            sendserial(ids, realworld_tvec[0], realworld_tvec[1], math.degrees(yaw))
+            sendserial(ids, send_x, send_y, math.degrees(yaw))
             t = dt.datetime.now()
 
     cv2.imshow('frame', frame)
