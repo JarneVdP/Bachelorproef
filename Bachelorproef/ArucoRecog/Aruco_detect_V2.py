@@ -63,6 +63,10 @@ cap.set(2, camera_width)
 cap.set(4, camera_height)
 cap.set(5, camera_frame_rate)
 
+send_x = 0
+send_y = 0
+send_heading = 0
+
 while True:
     ret, frame = cap.read()
     frame = cv2.rotate(frame, cv2.ROTATE_180)
@@ -88,6 +92,26 @@ while True:
 
         pitch, roll, yaw = rotationMatrixToEulerAngles(rotation_matrix)
 
+        #realworld_tvec[0] : x coördinaat
+        #realworld_tvec[1] : y coördinaat
+
+        if math.degrees(yaw) > 0.0 and math.degrees(yaw) < 90.0:
+            send_x = realworld_tvec[1]
+            send_y = realworld_tvec[0]
+            send_heading = math.degrees(yaw)
+        if math.degrees(yaw) > 90.0 and math.degrees(yaw) < 180.0:
+            send_x = realworld_tvec[0]
+            send_y = realworld_tvec[1]
+            send_heading = math.degrees(yaw) - 90
+        if math.degrees(yaw) < 0.0 and math.degrees(yaw) < -90.0:
+            send_x = -realworld_tvec[0]
+            send_y = -realworld_tvec[1]
+            send_heading = math.degrees(yaw)
+        if math.degrees(yaw) < -90.0 and math.degrees(yaw) < -180.0:
+            send_x = -realworld_tvec[1]
+            send_y = -realworld_tvec[0]
+            send_heading = math.degrees(yaw) + 90   
+        
         for i in range(len(ids)):
             # get the center point of the tag
             center = corners[i][0]
@@ -95,8 +119,7 @@ while True:
             cX = int(M["m10"] / M["m00"])
             cY = int(M["m01"] / M["m00"])
 
-        tvec_str = "id=%s x=%4.0f  y=%4.0f  dir=%4.0f"%(ids, tvec_flipped[0], realworld_tvec[1], math.degrees(yaw))
-        #tvec_str = "id=%s x=%4.0f  y=%4.0f  dir=%4.0f"%(ids, cX, cY, math.degrees(yaw))
+        tvec_str = "id=%s x=%4.0f  y=%4.0f  dir=%4.0f"%(ids, send_x, send_y, send_heading)
         cv2.putText(frame, tvec_str, (20, 460), cv2.FONT_HERSHEY_TRIPLEX, 0.7, (0, 0, 255), 2)
         
         # If ten second passes, send coordinates
