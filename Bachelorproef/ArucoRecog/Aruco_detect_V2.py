@@ -94,7 +94,8 @@ while True:
         #realworld_tvec[1] : y coördinaat
 
         # to do: distance calibration
-        #to do: angle calibration
+        # to do: angle calibration
+        # to do: timer for 90 seconds, send id= -1, position to 0, 0, 0
 
         distance = math.sqrt(realworld_tvec[0]**2 + realworld_tvec[1]**2) #te testen
         angle = math.atan2(realworld_tvec[1], realworld_tvec[0])    #te testen
@@ -123,7 +124,7 @@ while True:
             cX = int(M["m10"] / M["m00"])
             cY = int(M["m01"] / M["m00"])
 
-        tvec_str = "id=%s x=%4.0f  y=%4.0f  dir=%4.0f"%(ids, send_x, send_y, send_heading)
+        tvec_str = "id=%s x=%4.0f  y=%4.0f  dir=%4.0f angle=%4.0f"%(ids, send_x, send_y, send_heading, angle)
         cv2.putText(frame, tvec_str, (20, 460), cv2.FONT_HERSHEY_TRIPLEX, 0.7, (0, 0, 255), 2)
         
         # If two seconds pass, send coordinates
