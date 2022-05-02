@@ -43,7 +43,6 @@ def sendserial(idTag, x, y, heading):
     print(line)
     time.sleep(1)
 
-marker_size = 50        
 with open('camera_cal.npy', 'rb') as f:
     camera_matrix = np.load(f)
     camera_distortion = np.load(f)
@@ -52,6 +51,7 @@ aruco_dict = cv2.aruco.Dictionary_get(cv2.aruco.DICT_4X4_250)
 
 cap = cv2.VideoCapture(0)
 
+marker_size = 50        
 camera_width = 640
 camera_height = 480
 camera_frame_rate = 40
@@ -98,7 +98,7 @@ while True:
         # to do: timer for 90 seconds, send id= -1, position to 0, 0, 0
 
         distance = math.sqrt(realworld_tvec[0]**2 + realworld_tvec[1]**2) #te testen
-        angle = math.atan2(realworld_tvec[1], realworld_tvec[0])    #te testen
+        angle = math.degrees(math.atan2(realworld_tvec[0], realworld_tvec[1]))    #te testen
 
         if math.degrees(yaw) > 0.0 and math.degrees(yaw) < 90.0:
             send_x = realworld_tvec[1]
@@ -117,12 +117,12 @@ while True:
             send_y = -realworld_tvec[0]
             send_heading = math.degrees(yaw) 
         
-        for i in range(len(ids)):
+        #for i in range(len(ids)):
             # get the center point of the tag
-            center = corners[i][0]
-            M = cv2.moments(center)
-            cX = int(M["m10"] / M["m00"])
-            cY = int(M["m01"] / M["m00"])
+        #    center = corners[i][0]
+        #    M = cv2.moments(center)
+        #    cX = int(M["m10"] / M["m00"])
+        #    cY = int(M["m01"] / M["m00"])
 
         tvec_str = "id=%s x=%4.0f  y=%4.0f  dir=%4.0f angle=%4.0f"%(ids, send_x, send_y, send_heading, angle)
         cv2.putText(frame, tvec_str, (20, 460), cv2.FONT_HERSHEY_TRIPLEX, 0.7, (0, 0, 255), 2)
