@@ -54,6 +54,26 @@ const int correctServ2 = 10;
 const int correctServ3 = 0;
 
 
+//###########
+//#US Sensor#
+//###########
+//Pinnen voor ultrasonic sensor
+//front
+static const int USsensorFrontTrigger1 = 4;
+static const int USsensorFrontEcho1 = 5;
+static const int USsensorFrontTrigger2 = 8;
+static const int USsensorFrontEcho2 = 9;
+//left
+static const int USsensorLeftTrigger1 = 12;
+static const int USsensorLeftEcho1 = 13;
+int leftDistance = 0;
+//right
+static const int USsensorRightTrigger1 = 16;
+static const int USsensorRightEcho1 = 17;
+//back
+static const int USsensorBackTrigger1 = 20;
+static const int USsensorBackEcho1 = 21;
+int backDistance = 0;
 
 void setup() {
   //Servo
@@ -67,16 +87,35 @@ void setup() {
   pinMode(mosfet,OUTPUT);
   pinMode(stepPin, OUTPUT);
   pinMode(dirPin, OUTPUT);
-  
+  pinMode(USsensorFrontTrigger1, OUTPUT);
+  pinMode(USsensorFrontEcho1, INPUT);
+  pinMode(USsensorFrontTrigger2, OUTPUT);
+  pinMode(USsensorFrontEcho2, INPUT);
+  pinMode(USsensorLeftTrigger1, OUTPUT);
+  pinMode(USsensorFrontEcho1, INPUT);
+  pinMode(USsensorRightTrigger1, OUTPUT);
+  pinMode(USsensorRightEcho1, INPUT);
+  pinMode(USsensorBackTrigger1, OUTPUT);
+  pinMode(USsensorBackEcho1, INPUT);
+
+  backDistance = measureDist(USsensorBackTrigger1, USsensorBackEcho1);
+  leftDistance = measureDist(USsensorLeftTrigger1, USsensorLeftEcho1);
+  // Position = ...;
   Serial.println("Let's go");
 }
 
 
 void loop() {
+  //Measure distance in the front
+  int frontDistance = measureDist(USsensorFrontTrigger1, USsensorFrontEcho1);
+  int frontDistance2 = measureDist(USsensorFrontTrigger2, USsensorFrontEcho2);
+  if (frontDistance <15 || frontDistance2< 15){
+    stilstaan();
+  }
   odometry(Position);
   Serial.println(Position.x_pos);
   SerialCommunication();
-  int *distanceF = measureDist(); //located in different file 
+  //int *distanceF = measureDist(); //located in different file 
   if (x_ard > 0 && y_ard > 0) {
     movement();
   }
