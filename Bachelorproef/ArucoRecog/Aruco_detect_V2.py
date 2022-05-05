@@ -51,7 +51,7 @@ aruco_dict = cv2.aruco.Dictionary_get(cv2.aruco.DICT_4X4_250)
 
 cap = cv2.VideoCapture(0)
 
-marker_size = 50        
+marker_size = 5        
 camera_width = 640
 camera_height = 480
 camera_frame_rate = 40
@@ -124,13 +124,14 @@ while True:
         #    cX = int(M["m10"] / M["m00"])
         #    cY = int(M["m01"] / M["m00"])
 
-        tvec_str = "id=%s x=%4.0f  y=%4.0f  dir=%4.0f angle=%4.0f"%(ids, send_x, send_y, send_heading, angle)
+        tvec_str = "id=%s x=%4.0f  y=%4.0f  dir=%4.0f"%(ids, send_x, send_y, send_heading)
         cv2.putText(frame, tvec_str, (20, 460), cv2.FONT_HERSHEY_TRIPLEX, 0.7, (0, 0, 255), 2)
         
         # If two seconds pass, send coordinates
         delta = dt.datetime.now()-t
         if delta.seconds >= 2:
             sendserial(ids, send_x, send_y, math.degrees(yaw))
+            #print(tvec_str)
             t = dt.datetime.now()
 
     cv2.imshow('frame', frame)
