@@ -110,7 +110,7 @@ void loop() {
   int frontDistance = measureDist(USsensorFrontTrigger1, USsensorFrontEcho1);
   int frontDistance2 = measureDist(USsensorFrontTrigger2, USsensorFrontEcho2);
   if (frontDistance <15 || frontDistance2< 15){
-    stilstaan();
+    stilstand();
   }
   odometry(Position);
   Serial.println(Position.x_pos);

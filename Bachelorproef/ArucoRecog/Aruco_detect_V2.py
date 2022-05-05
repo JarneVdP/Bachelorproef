@@ -5,6 +5,7 @@ import cv2, math, time, serial
 import datetime as dt
 
 t = dt.datetime.now()
+t_totaltime = dt.datetime.now()
 
 # Checks if a matrix is a valid rotation matrix.    https://learnopencv.com/rotation-matrix-to-euler-angles/
 def isRotationMatrix(R) :
@@ -64,6 +65,14 @@ cap.set(5, camera_frame_rate)
 send_x = 0
 send_y = 0
 send_heading = 0
+
+# if total time delta is bigger than 84, send data to arduino
+delta_totaltime = dt.datetime.now()-t_totaltime
+if delta_totaltime.seconds >= 84:
+    sendserial(-1, 5, 5, math.degrees(0))
+    #print(tvec_str)
+    t = dt.datetime.now()
+
 
 while True:
     ret, frame = cap.read()
