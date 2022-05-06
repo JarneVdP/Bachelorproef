@@ -77,6 +77,42 @@ if delta_totaltime.seconds >= 84:
 while True:
     ret, frame = cap.read()
     frame = cv2.rotate(frame, cv2.ROTATE_180)
+    #change threshold to adjust the detection
+    # gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+    # aruco_dict = cv2.aruco.Dictionary_get(cv2.aruco.DICT_4X4_250)
+    # parameters =  cv2.aruco.DetectorParameters_create()
+    # parameters.adaptiveThreshConstant = 10
+    # parameters.adaptiveThreshWinSizeMax = 15
+    # parameters.adaptiveThreshWinSizeMin = 5
+    # parameters.adaptiveThreshWinSizeStep = 2
+    # parameters.cornerRefinementMethod = cv2.aruco.CORNER_REFINE_CONTOUR
+    # parameters.cornerRefinementWinSize = 5
+    # parameters.cornerRefinementMaxIterations = 30
+    # parameters.minMarkerPerimeterRate = 0.01
+    # parameters.maxMarkerPerimeterRate = 4
+    # parameters.polygonalApproxAccuracyRate = 0.05
+    # parameters.minCornerDistanceRate = 0.05
+    # parameters.minDistanceToBorder = 3
+    # parameters.minMarkerDistanceRate = 0.05
+    # parameters.cornerRefinementWinSize = 5
+    # parameters.cornerRefinementMaxIterations = 30
+    # parameters.cornerRefinementMinAccuracy = 0.1
+    # parameters.markerBorderBits = 1
+    # parameters.perspectiveRemovePixelPerCell = 8
+    # parameters.perspectiveRemoveIgnoredMarginPerCell = 0.13
+    # parameters.maxErroneousBitsInBorderRate = 0.04
+    # parameters.minOtsuStdDev = 5.0
+    # parameters.errorCorrectionRate = 0.6
+    # parameters.doCornerRefinement = True
+    # parameters.aprilTagQuadDecimate = 0.5
+    # parameters.aprilTagQuadSigma = 0.8
+    # parameters.aprilTagMinClusterPixels = 100
+    # parameters.aprilTagMaxNmaxima = 10
+    # parameters.aprilTagCriticalRad = 5
+    # parameters.aprilTagMaxLineFitMse = 100
+    # parameters.aprilTagMinWhiteBlackDiff = 0.25
+    # parameters.aprilTagDeglitch = True
+    # parameters.aprilTagQuadSigma = 0.8
 
     gray_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
 

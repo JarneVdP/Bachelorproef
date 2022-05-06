@@ -3,6 +3,17 @@
 // Testen met motoraansturing.
 #include <Arduino.h>
 
+// +------+
+// +Motors+
+// +------+
+//Motor A
+int enA = 8;
+int in1 = 9;
+int in2 = 7;
+//Motor B
+int enB = 6;
+int in3 = 5;
+int in4 = 4;
 
 // +--------+
 // +Odometry+
@@ -40,18 +51,17 @@ PositionStruct Position = {0, 0, 0};
 MeSmartServo mysmartservo(PORT5);   //UART2 is on port 5
 
 long loopTime = 0; 
-long carBeforeSample = 0; //car is before sample --> 1 otherwise 0
-long carBaseCamp = 0; // car is in base camp --> 1 otherwise 0
 bool dir = LOW; //stepper off
 
 const int mtr_speed = 20;
-const int dirPin = 2;
-const int stepPin = 3;
-const int mosfet = 4;
+const int dirPin = 43;
+const int stepPin = 45;
+const int mosfet = 47;
 
 const int correctServ1 = 10;
-const int correctServ2 = 10;
+const int correctServ2 = -45+10;
 const int correctServ3 = 0;
+//end servo
 
 
 //###########
@@ -75,18 +85,14 @@ static const int USsensorBackTrigger1 = 20;
 static const int USsensorBackEcho1 = 21;
 int backDistance = 0;
 
+
 void setup() {
-  //Servo
-  Serial.begin(115200);
-  mysmartservo.begin(115200);
-  delay(5);
-  mysmartservo.assignDevIdRequest();
-  delay(50);
-  Serial.println("setup!");
-  loopTime = millis();
-  pinMode(mosfet,OUTPUT);
-  pinMode(stepPin, OUTPUT);
-  pinMode(dirPin, OUTPUT);
+  pinMode(enA, OUTPUT);
+  pinMode(enB, OUTPUT);
+  pinMode(in1, OUTPUT);
+  pinMode(in2, OUTPUT);
+  pinMode(in3, OUTPUT);
+  pinMode(in4, OUTPUT);
   pinMode(USsensorFrontTrigger1, OUTPUT);
   pinMode(USsensorFrontEcho1, INPUT);
   pinMode(USsensorFrontTrigger2, OUTPUT);
@@ -98,15 +104,33 @@ void setup() {
   pinMode(USsensorBackTrigger1, OUTPUT);
   pinMode(USsensorBackEcho1, INPUT);
 
-  backDistance = measureDist(USsensorBackTrigger1, USsensorBackEcho1);
-  leftDistance = measureDist(USsensorLeftTrigger1, USsensorLeftEcho1);
-  // Position = ...;
-  Serial.println("Let's go");
+  mysmartservo.begin(9600);
+  delay(5);
+  mysmartservo.assignDevIdRequest();
+  delay(50);
+  loopTime = millis();
+  pinMode(mosfet,OUTPUT);
+  pinMode(stepPin, OUTPUT);
+  pinMode(dirPin, OUTPUT);
+
+  backDistance = measureDist(USsensorBackTrigger1, USsensorBackEcho1);  //x start
+  leftDistance = measureDist(USsensorLeftTrigger1, USsensorLeftEcho1);  //y start
+  Serial.println("back distance:");
+  Serial.print(backDistance);
+  Serial.println("left distance:");
+  Serial.print(leftDistance);
+  
+  Serial.begin(9600);
 }
 
 
 void loop() {
   //Measure distance in the front
+  if (Serial.available() > 0) {
+    String data = Serial.readStringUntil('\n');
+    sscanf(data.c_str(), "%d;%d;%d;%d", &id_ard, &x_ard, &y_ard, &heading_ard);
+  }
+
   int frontDistance = measureDist(USsensorFrontTrigger1, USsensorFrontEcho1);
   int frontDistance2 = measureDist(USsensorFrontTrigger2, USsensorFrontEcho2);
   if (frontDistance <15 || frontDistance2< 15){
@@ -119,7 +143,7 @@ void loop() {
   if (x_ard > 0 && y_ard > 0) {
     movement();
   }
-  action(); //servo movement
+  grappingSample(); //servo movement
   Serial.println(x_pos);
 }
 
