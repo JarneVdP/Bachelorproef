@@ -3,6 +3,8 @@ from matplotlib.pyplot import gray
 import numpy as np
 import cv2, math, time, serial
 import datetime as dt
+#include <opencv2/aruco.hpp>
+#import cv2.aruco as aruco
 
 t = dt.datetime.now()
 t_totaltime = dt.datetime.now()
@@ -50,6 +52,45 @@ with open('camera_cal.npy', 'rb') as f:
 
 aruco_dict = cv2.aruco.Dictionary_get(cv2.aruco.DICT_4X4_250)
 
+parameters =  cv2.aruco.DetectorParameters_create()
+parameters.adaptiveThreshConstant = 10
+parameters.adaptiveThreshWinSizeMax = 15
+parameters.adaptiveThreshWinSizeMin = 5
+parameters.adaptiveThreshWinSizeStep = 2
+# parameters.cornerRefinementMethod = cv2.aruco.CORNER_REFINE_CONTOUR
+# parameters.cornerRefinementWinSize = 5
+# parameters.cornerRefinementMaxIterations = 30
+# parameters.minMarkerPerimeterRate = 0.01
+# parameters.maxMarkerPerimeterRate = 4
+# parameters.polygonalApproxAccuracyRate = 0.05
+# parameters.minCornerDistanceRate = 0.05
+# parameters.minDistanceToBorder = 3
+# parameters.minMarkerDistanceRate = 0.05
+# parameters.cornerRefinementWinSize = 5
+# parameters.cornerRefinementMaxIterations = 30
+# parameters.cornerRefinementMinAccuracy = 0.1
+# parameters.markerBorderBits = 1
+# parameters.perspectiveRemovePixelPerCell = 8
+# parameters.perspectiveRemoveIgnoredMarginPerCell = 0.13
+# parameters.maxErroneousBitsInBorderRate = 0.04
+# parameters.minOtsuStdDev = 5.0
+# parameters.errorCorrectionRate = 0.6
+# #parameters.doCornerRefinement = True
+# parameters.aprilTagQuadDecimate = 0.5
+# parameters.aprilTagQuadSigma = 0.8
+# parameters.aprilTagMinClusterPixels = 100
+# parameters.aprilTagMaxNmaxima = 10
+# parameters.aprilTagCriticalRad = 5
+# parameters.aprilTagMaxLineFitMse = 100
+# parameters.aprilTagMinWhiteBlackDiff = 20
+# #parameters.aprilTagDeglitch = True
+# parameters.aprilTagQuadSigma = 0.8
+# parameters.aprilTagMinClusterPixels = 100
+# parameters.aprilTagMaxNmaxima = 10
+# parameters.aprilTagCriticalRad = 5
+# parameters.aprilTagMaxLineFitMse = 100
+
+
 cap = cv2.VideoCapture(0)
 
 marker_size = 5        
@@ -78,45 +119,14 @@ while True:
     ret, frame = cap.read()
     frame = cv2.rotate(frame, cv2.ROTATE_180)
     #change threshold to adjust the detection
-    # gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-    # aruco_dict = cv2.aruco.Dictionary_get(cv2.aruco.DICT_4X4_250)
-    # parameters =  cv2.aruco.DetectorParameters_create()
-    # parameters.adaptiveThreshConstant = 10
-    # parameters.adaptiveThreshWinSizeMax = 15
-    # parameters.adaptiveThreshWinSizeMin = 5
-    # parameters.adaptiveThreshWinSizeStep = 2
-    # parameters.cornerRefinementMethod = cv2.aruco.CORNER_REFINE_CONTOUR
-    # parameters.cornerRefinementWinSize = 5
-    # parameters.cornerRefinementMaxIterations = 30
-    # parameters.minMarkerPerimeterRate = 0.01
-    # parameters.maxMarkerPerimeterRate = 4
-    # parameters.polygonalApproxAccuracyRate = 0.05
-    # parameters.minCornerDistanceRate = 0.05
-    # parameters.minDistanceToBorder = 3
-    # parameters.minMarkerDistanceRate = 0.05
-    # parameters.cornerRefinementWinSize = 5
-    # parameters.cornerRefinementMaxIterations = 30
-    # parameters.cornerRefinementMinAccuracy = 0.1
-    # parameters.markerBorderBits = 1
-    # parameters.perspectiveRemovePixelPerCell = 8
-    # parameters.perspectiveRemoveIgnoredMarginPerCell = 0.13
-    # parameters.maxErroneousBitsInBorderRate = 0.04
-    # parameters.minOtsuStdDev = 5.0
-    # parameters.errorCorrectionRate = 0.6
-    # parameters.doCornerRefinement = True
-    # parameters.aprilTagQuadDecimate = 0.5
-    # parameters.aprilTagQuadSigma = 0.8
-    # parameters.aprilTagMinClusterPixels = 100
-    # parameters.aprilTagMaxNmaxima = 10
-    # parameters.aprilTagCriticalRad = 5
-    # parameters.aprilTagMaxLineFitMse = 100
-    # parameters.aprilTagMinWhiteBlackDiff = 0.25
-    # parameters.aprilTagDeglitch = True
-    # parameters.aprilTagQuadSigma = 0.8
+    gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+    
+    #apply parameters on aruco detectMarkers
+    corners, ids, rejected = cv2.aruco.detectMarkers(gray, aruco_dict, camera_matrix, camera_distortion)#, parameters=parameters)
 
-    gray_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
 
-    corners, ids, rejected = cv2.aruco.detectMarkers(gray_frame, aruco_dict, camera_matrix, camera_distortion)
+    #gray_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)   
+    #corners, ids, rejected = cv2.aruco.detectMarkers(gray_frame, aruco_dict, camera_matrix, camera_distortion)
 
     if ids is not None:
         cv2.aruco.drawDetectedMarkers(frame, corners)
@@ -161,20 +171,14 @@ while True:
             send_x = realworld_tvec[1]
             send_y = -realworld_tvec[0]
             send_heading = math.degrees(yaw) 
-        
-        #for i in range(len(ids)):
-            # get the center point of the tag
-        #    center = corners[i][0]
-        #    M = cv2.moments(center)
-        #    cX = int(M["m10"] / M["m00"])
-        #    cY = int(M["m01"] / M["m00"])
+    
 
         tvec_str = "id=%s x=%4.0f  y=%4.0f  dir=%4.0f"%(ids, send_x, send_y, send_heading)
         cv2.putText(frame, tvec_str, (20, 460), cv2.FONT_HERSHEY_TRIPLEX, 0.7, (0, 0, 255), 2)
         
         # If two seconds pass, send coordinates
         delta = dt.datetime.now()-t
-        if delta.seconds >= 2:
+        if delta.seconds >= 1.5:
             sendserial(ids, send_x, send_y, math.degrees(yaw))
             #print(tvec_str)
             t = dt.datetime.now()
@@ -188,10 +192,6 @@ while True:
 
 cap.release()
 cv2.destroyAllWindows
-
-""" rijden totdat x = 0 <= gecenterd voor de sample"""
-"""rijden totdat y = ..."""
-""" op dit moment nog niet teveel naar de angle kijken van de camera, enkel naar de angle van de encoderes om zichzelf recht te zetten."""
 
 
 """ get real world pose from aruco marker """ 
