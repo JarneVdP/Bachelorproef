@@ -8,9 +8,5 @@ int measureDist(int trigger, int echo){   //Ultrasone sensors plaatsen (2 vanvoo
   digitalWrite(echo, LOW);
 
   int distance = duration * 0.034 / 2; // Speed of sound wave divided by 2 (go and back)
-
-  // Displays the distance on the Serial Monitor
-  Serial.print("Distance Forward: ");
-  Serial.print(distance);
   return distance;
 } 

@@ -3,8 +3,7 @@ from matplotlib.pyplot import gray
 import numpy as np
 import cv2, math, time, serial
 import datetime as dt
-#include <opencv2/aruco.hpp>
-#import cv2.aruco as aruco
+
 
 t = dt.datetime.now()
 t_totaltime = dt.datetime.now()
@@ -150,7 +149,6 @@ while True:
 
         # to do: distance calibration
         # to do: angle calibration
-        # to do: timer for 90 seconds, send id= -1, position to 0, 0, 0
 
         distance = math.sqrt(realworld_tvec[0]**2 + realworld_tvec[1]**2) #te testen
         angle = math.degrees(math.atan2(realworld_tvec[0], realworld_tvec[1]))    #te testen

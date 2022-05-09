@@ -5,7 +5,7 @@ void stilstand()
   digitalWrite(in3, LOW);
   digitalWrite(in4, LOW);
 }
-void vooruit()
+void achteruit()
 {
   digitalWrite(in1, LOW);
   digitalWrite(in2, HIGH);
@@ -14,7 +14,7 @@ void vooruit()
   analogWrite(enA, 200);
   analogWrite(enB, 200);
 }
-void achteruit()
+void vooruit()
 {
   digitalWrite(in1, HIGH);
   digitalWrite(in2, LOW);
@@ -23,7 +23,7 @@ void achteruit()
   analogWrite(enA, 200);
   analogWrite(enB, 200);
 }
-void eigenasdraaienlinks()
+void eigenasdraaienrechts()
 {
   digitalWrite(in1, HIGH);
   digitalWrite(in2, LOW);
@@ -32,7 +32,7 @@ void eigenasdraaienlinks()
   analogWrite(enA, 175);
   analogWrite(enB, 175);
 }
-void eigenasdraaienrechts()
+void eigenasdraaienlinks()
 {
   digitalWrite(in1, LOW);
   digitalWrite(in2, HIGH);

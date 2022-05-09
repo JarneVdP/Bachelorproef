@@ -11,35 +11,36 @@ int position_bot = 0;
 int direction_bott = 0;
 int draai_bot = 0;
 
-void station(double x, double y, double x_station, double y_station, float heading, float heading_station) {
+void goTo(double x, double y, double x_station, double y_station, float heading, float heading_station) {
   unsigned long currentMillis = millis();
+  //kijken hoe we gericht staan
   if ( heading <= hoek && heading >= (hoek * -1) && direction_bot == 0){
-    direction_bot=1;
+    direction_bot=1; //vooruit kijken
     }
   else if (heading > hoek || heading < (hoek * -1) && direction_bot == 0){
-    direction_bot=2;
+    direction_bot=2; //achteruit kijken
     }
   
-  if ( direction_bot == 1) //check robot kijkt voor of achter
+  if ( direction_bot == 1) // kijkt vooruit
   {
     Serial.println("robot 0 graden");
-    if (y_station > x && position_bot == 0 ) // sation checken, voor of achter, y robot kleiner
+    if (y_station > x && position_bot == 0 ) // station checken,station is voor robot
     {
       Serial.println("y robot kleiner");
-      mapp2( x, heading, y_station,  heading_station); //vooruit
-      if (y_station < x + error_x )
+      mapp2( x, heading, y_station,  heading_station); //vooruit naar station rijden: hoek te draaien is tussen 90 en -90
+      if (y_station < x + error_x ) //om uit de loop te komen
       {
-        position_bot = 1;
-        direction_bott = 1;
+        position_bot = 1; // niet meer in volgende ifs , doel is bereikt
+        direction_bott = 1; // niet meer in volgende ifs , doel is bereikt
       }
     }
-    else if (y_station <= x && position_bot == 0) //achteruit, y robot groter
+    else if (y_station <= x && position_bot == 0) //achter de robot. Hoek te draaien groter dan -90 of +90
     {
       Serial.println("y robot groter");
       if ( y == x_station) // letterlijk achter de robot
       {
         Serial.println("stap2");
-        draai_bot = 3;
+        draai_bot = 3; //
       }
       if (y > x_station && draai_bot != 3)  // station links dus links draaien
       {
@@ -57,7 +58,7 @@ void station(double x, double y, double x_station, double y_station, float headi
       direction_bot = 3; // loop af? ga naar volgende
     }
   }
-  else if (direction_bot == 2) // robot ligt tussen hoek 90 en -90
+  else if (direction_bot == 2) // robot kijkt achteruit
   {
     Serial.println("robot 180 graden");
     if (y_station < x && position_bot == 0) //station ligt voor robot
@@ -94,35 +95,35 @@ void station(double x, double y, double x_station, double y_station, float headi
       direction_bot = 3; // loop af? ga naar volgende
     }
   }
-  if (draai_bot == 1 && direction_bott == 0)
+  if (draai_bot == 1 && direction_bott == 0) // draai naar links
   {
     Serial.println("draai_0");
-    draai(0, heading, heading_station, x, y_station);
+    draai(0, heading, heading_station, x, y_station); // 0 is links
     if (x <= y_station)
     {
-      direction_bott = 1;
+      direction_bott = 1; //doel bereikt, ga eruit
     }
   }
   if (draai_bot == 2 && direction_bott == 0)
   {
     Serial.println("draai_1");
-    draai(1, heading, heading_station, x, y_station );
+    draai(1, heading, heading_station, x, y_station ); //1 is rechts
     if (x <= y_station)
     {
-      direction_bott = 1;
+      direction_bott = 1; //doel bereikt, ga eruit
     }
   }
-  if (draai_bot == 3 && direction_bott == 0)
+  if (draai_bot == 3 && direction_bott == 0) //achter de robot
   {
     Serial.println("draai_3");
-    draai(0, heading, -0.01, x, y_station );
+    draai(0, heading, -0.01, x, y_station ); //via links draaien
     Serial.println("heading ");
     Serial.println(heading);
     Serial.println("headingstation ");
     Serial.println(heading_station);
     if (x <= y_station)
     {
-      direction_bott = 1;
+      direction_bott = 1; //doel bereikt, ga eruit
     }
   }
   if (draai_bot == 4 && direction_bott == 0)

@@ -1,7 +1,7 @@
 volgorde:
 
 
-read ultrasonic sensors 20x en neem average: zowel achter als links
+read ultrasonic sensors 20x en neem average: zowel achter als links check
 
 Go to excavation square at 800 - 1150 mm
 

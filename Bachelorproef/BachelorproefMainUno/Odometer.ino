@@ -44,7 +44,7 @@ void odometry(PositionStruct &Position) {
   newFront = -1 * knobFront.read();
 
   //print encoder rotations
-    if(newLeft != prev_positionLeft || newRight != prev_positionRight || newFront != prev_positionFront){
+  if(newLeft != prev_positionLeft || newRight != prev_positionRight || newFront != prev_positionFront){
     Serial.print("Left = ");
     Serial.print(newLeft);
     Serial.print(", Right = ");

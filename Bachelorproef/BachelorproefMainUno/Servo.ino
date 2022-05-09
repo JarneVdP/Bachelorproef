@@ -1,4 +1,4 @@
-void grappingSample(){
+void grabbingSample(){
   //MotorGoUp(10); // bring glider to right vertical position
   //delay(5000);
   servo(-30,9.3,-104.6);
@@ -7,11 +7,11 @@ void grappingSample(){
   servo(90,90,0);
 }
 
-void grappingSample17(){
+void grabbingSample17(){
   //MotorGoUp(10); // bring glider to right vertical position
   //delay(5000);
   servo(-30,9.3,-104.6);
-  digitalWrite(mosfet,HIGH);
+  //digitalWrite(mosfet,HIGH);
   delay(500);
   servo(-30,70,-104.6);
   servo(-45,-35,130);
