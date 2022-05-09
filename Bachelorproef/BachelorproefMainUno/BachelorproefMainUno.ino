@@ -260,7 +260,9 @@ void loop(){
     samples_place[sample_counter]++;
     heading_statement = 0;
   }
-  ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-  //goTo( Position.x_pos,  Position.y_pos,  x_station,  y_stationGreen,  Position.heading, heading_doel ); //naar station rijden
-  //mapp( Position.x_pos,  Position.heading,  camera_y,  camera_heading); //naar sample rijden vanaf huidige positie
 }
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//goTo( Position.x_pos,  Position.y_pos,  x_station,  y_stationGreen,  Position.heading, heading_doel ); //naar station rijden
+//mapp( Position.x_pos,  Position.heading,  camera_y,  camera_heading); //naar sample rijden vanaf huidige positie
+//mapp , mapping1 wordt (denk ik) nieet meer gebruikt
