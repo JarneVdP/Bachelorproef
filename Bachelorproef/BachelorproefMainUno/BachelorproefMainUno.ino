@@ -141,7 +141,7 @@ void loop(){
   if (Serial.available() > 0 && state_serial == 0) { //receive data from raspberry pi
     String data = Serial.readStringUntil('\n');
     sscanf(data.c_str(), "%d;%d;%d;%d", &id_ard, &x_ard, &y_ard, &heading_ard);
-    state_serial = 1;
+    if (id_ard != 0) { state_serial = 1; } //only save values of something actually got received
     Serial.print("data received:");
     Serial.print(id_ard);
     Serial.print(",");
@@ -154,10 +154,10 @@ void loop(){
   if (id_ard == -1) { //mogelijks nog een waarde erbij doen indien id_ard gereset wordt wanneer de camera de sample niet meer ziet
     Serial.println("Time's up");
     if (heading_statement == 0) { //hoek bepalen
-    heading_doel = heading_station(Position.x_pos,  Position.y_pos,  x_station,  y_stationGreen); //berekenen van de hoek tussen huidige positie en station
+    heading_doel = heading_station(Position.x_pos,  Position.y_pos,  backDistance,  leftDistance); //berekenen van de hoek tussen huidige positie en station
     heading_statement = 1;
     }
-    goTo(Position.x_pos, Position.y_pos, x_ard, y_ard ,Position.heading, heading_doel);
+    goTo(Position.x_pos, Position.y_pos, backDistance, leftDistance ,Position.heading, heading_doel);
   }  
 
   odometry(Position); //update positie
