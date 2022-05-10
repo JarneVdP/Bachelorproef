@@ -6,11 +6,16 @@
 //   Best Performance: both pins have interrupt capability
 //   Good Performance: only the first pin has interrupt capability
 //   Low Performance:  neither pin has interrupt capability
-
+/*
 // White - Green
 Encoder knobLeft(0, 1); //white/white - pink/green  
 Encoder knobRight(2, 3); //white/white - orange/green
 Encoder knobFront(6, 7); //yellow/white - purple/green
+*/
+
+Encoder knobRight(2, 3); //white/white - pink/green
+Encoder knobLeft(18, 19); //white/white - orange/green
+Encoder knobFront(20, 21); //yellow/white - purple/green
 
 void setup() {
   Serial.begin(9600);
@@ -40,9 +45,9 @@ void loop() {
 
 void odometry(){
   //currentposition based on encoder readings
-  newLeft = -1 * knobLeft.read();
+  newLeft =  knobLeft.read();
   newRight = -1* knobRight.read();
-  newFront = knobFront.read();
+  newFront = -1* knobFront.read();
 
   //print encoder rotations
     if(newLeft != prev_positionLeft || newRight != prev_positionRight || newFront != prev_positionFront){
