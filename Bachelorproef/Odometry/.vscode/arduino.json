@@ -1,5 +1,0 @@
-{
-    "board": "arduino:avr:micro",
-    "port": "COM8",
-    "sketch": "TwoKnobsTest.ino"
-}
