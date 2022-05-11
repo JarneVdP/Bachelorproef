@@ -37,10 +37,11 @@ def rotationMatrixToEulerAngles(R) :
 
     return np.array([x, y, z])
 
+emptyserial = -99   #add a burner variable because the arduino doesn't read the first values
 def sendserial(idTag, x, y, heading):
-    ser = serial.Serial('/dev/ttyACM0', 9600, timeout=1)
+    ser = serial.Serial('/dev/ttyUSB0', 115200, timeout=1) #ttyACM0 USB0 ls /dev/tty*
     ser.reset_input_buffer()
-    ser.write(str.encode("%d;%d;%d;%d\n" % (idTag[0][0],x, y, heading)))
+    ser.write(str.encode("%d;%d;%d;%d;%d\n" % (emptyserial ,idTag,x, y, heading)))
     line = ser.readline().decode('utf-8').rstrip()
     print(line)
     time.sleep(1)
