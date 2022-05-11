@@ -1,12 +1,16 @@
 //Motor A
 int enA = 10; 
-int in1 = 9; 
-int in2 = 7; 
+int in1 = 39; //9
+int in2 = 37; //7
 //Motor B
-int enB = 8; 
+int enB = 38; //8
 int in3 = 5; 
 int in4 = 4; 
 
+int led1 = 6;
+int led2 = 7;
+int led3 = 8;
+int led4 = 15;
 //###########
 //#US Sensor#
 //###########
@@ -65,13 +69,18 @@ int heading_statement = 0;
 float heading_doel;
 
 void setup() {
-  Serial.begin(9600);
+  Serial.begin(115200);
   pinMode(enA, OUTPUT);
   pinMode(enB, OUTPUT);
   pinMode(in1, OUTPUT);
   pinMode(in2, OUTPUT);
   pinMode(in3, OUTPUT);
   pinMode(in4, OUTPUT);
+
+  pinMode(led1, OUTPUT);
+  pinMode(led2, OUTPUT);
+  pinMode(led3, OUTPUT);
+  pinMode(led4, OUTPUT);
   
   pinMode(USsensorFrontTrigger1, OUTPUT);
   pinMode(USsensorFrontEcho1, INPUT);
@@ -84,7 +93,7 @@ void setup() {
   pinMode(USsensorBackTrigger1, OUTPUT);
   pinMode(USsensorBackEcho1, INPUT);
   
-  mysmartservo.begin(9600);
+  mysmartservo.begin(115200);
   delay(5);
   mysmartservo.assignDevIdRequest();
   delay(50);
@@ -108,8 +117,7 @@ void setup() {
 float headingingraden= 0 * (3.14159265359 / 180);
 PositionStruct Position = {leftDistance, backDistance, headingingraden}; // x en y zijn y en x in speelveld, dus omdraaien hier
 
-int x_ard, y_ard, heading_ard = 2;
-int id_ard = 0;
+int emptyserial, id_ard, x_ard, y_ard, heading_ard = 0;
 
 //locaties van de samples
 int x_sample[] = {40, 60, 0};
@@ -135,23 +143,22 @@ int state_serial = 0; //0 = serial niet ontvangen, 1 = serial ontvangen
 double camera_y = 20;
 float camera_heading = 60; // * (3.14159265359/180);
 
-
+//Serial communication rpi - ard
+String data = "";
 
 void loop(){
   odometry(Position); //update positie
-  if (Serial.available() > 0 ){//&& state_serial == 0) { //receive data from raspberry pi
-    String data = Serial.readStringUntil('\n');
-    sscanf(data.c_str(), "%d;%d;%d;%d", &id_ard, &x_ard, &y_ard, &heading_ard);
-    if (id_ard != 0) { state_serial = 1; } //only save values of something actually got received
-    Serial.print("data received:");
-    Serial.print(id_ard);
-    Serial.print(",");
-    Serial.print(x_ard);
-    Serial.print(",");
-    Serial.print(y_ard);
-    Serial.print(",");
-    Serial.println(heading_ard);
+  if (Serial.available() > 0 && state_serial == 0) { //receive data from raspberry pi
+    data = Serial.readStringUntil('\n');
+    sscanf(data.c_str(), "%d;%d;%d;%d;%d", &emptyserial, &id_ard, &x_ard, &y_ard, &heading_ard);    //add emptyserial because the first value doesn't get sent/ received
+    /* Serial.print(id_ard); Serial.print(","); Serial.print(x_ard); Serial.print(",");Serial.print(y_ard); Serial.print(","); Serial.println(heading_ard); */
+    if (id_ard != 0) { state_serial = 1;}
   }
+  if (id_ard > 0){ digitalWrite(led1, HIGH);} //6
+  if (x_ard > 0){ digitalWrite(led2, HIGH);} //7
+  if (y_ard > 0){ digitalWrite(led3, HIGH);} //8
+  if (heading_ard > 0){ digitalWrite(led4, HIGH);} //15
+  
   if (id_ard == -1) { //mogelijks nog een waarde erbij doen indien id_ard gereset wordt wanneer de camera de sample niet meer ziet
     Serial.println("Time's up");
     if (heading_statement == 0) { //hoek bepalen
@@ -171,12 +178,13 @@ void loop(){
   }
   if (samples_place[0] < 1){ // go from excavation square to turnover square
     odometry(Position); //update positie
-    Serial.println("All samples in axcav place stored. Searching in turn square");
+    Serial.println("All samples in excav place stored. Searching in turn square");
     sample_counter = 1;
   }
   // go to sample state_ExcavationSquare
   if (state_ExcavationSquare  == 0  && state_sample == 0 && state_station == 0) {
-    Serial.println("go to excavation square");
+    //Serial.println("go to excavation square");
+    Serial.println(data);
     odometry(Position); //update positie
     goTo(Position.x_pos,  Position.y_pos,  x_sample[sample_counter],  y_sample[sample_counter],  Position.heading, heading_sample[sample_counter]);
     if (Position.x_pos > x_sample[sample_counter] - 5 && Position.x_pos < x_sample[sample_counter] + 5 && Position.y_pos > y_sample[sample_counter] - 5 && Position.y_pos < y_sample[sample_counter] + 5){
