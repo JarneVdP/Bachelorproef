@@ -154,12 +154,16 @@ void loop(){
     /* Serial.print(id_ard); Serial.print(","); Serial.print(x_ard); Serial.print(",");Serial.print(y_ard); Serial.print(","); Serial.println(heading_ard); */
     if (id_ard != 0) { state_serial = 1;}
   }
-  if (id_ard > 0){ digitalWrite(led1, HIGH);} //6
-  if (x_ard > 0){ digitalWrite(led2, HIGH);} //7
-  if (y_ard > 0){ digitalWrite(led3, HIGH);} //8
-  if (heading_ard > 0){ digitalWrite(led4, HIGH);} //15
+  //if (id_ard > 0){ digitalWrite(led1, HIGH);} //6
+  //if (x_ard > 0){ digitalWrite(led2, HIGH);} //7
+  //if (y_ard > 0){ digitalWrite(led3, HIGH);} //8
+  //if (heading_ard > 0){ digitalWrite(led4, HIGH);} //15
   
   if (id_ard == -1) { //mogelijks nog een waarde erbij doen indien id_ard gereset wordt wanneer de camera de sample niet meer ziet
+    state_ExcavationSquare = 2;
+    state_sample = 2;
+    state_station = 2;
+
     Serial.println("Time's up");
     if (heading_statement == 0) { //hoek bepalen
     heading_doel = heading_station(Position.x_pos,  Position.y_pos,  backDistance,  leftDistance); //berekenen van de hoek tussen huidige positie en station
@@ -178,7 +182,7 @@ void loop(){
   }
   if (samples_place[0] < 1){ // go from excavation square to turnover square
     odometry(Position); //update positie
-    Serial.println("All samples in excav place stored. Searching in turn square");
+    Serial.println("All samples in excavation1 place stored. Searching in excavation2/turn square");
     sample_counter = 1;
   }
   // go to sample state_ExcavationSquare
@@ -288,6 +292,7 @@ void loop(){
     state_ExcavationSquare = 0;
     samples_place[sample_counter]++;
     heading_statement = 0;
+    id_ard = 0;
   }
 }
 

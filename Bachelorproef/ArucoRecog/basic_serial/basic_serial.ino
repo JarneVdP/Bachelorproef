@@ -1,13 +1,13 @@
 void setup() {
-  Serial.begin(9600);
+  Serial.begin(115200);
 }
 
-int x_ard, y_ard, heading_ard, id_ard;
+int emptyserial, x_ard, y_ard, heading_ard, id_ard = 0;
 
 void loop() {
   if (Serial.available() > 0) {
     String data = Serial.readStringUntil('\n');
-    sscanf(data.c_str(), "%d;%d;%d;%d", &id_ard, &x_ard, &y_ard, &heading_ard);
+    sscanf(data.c_str(), "%d;%d;%d;%d;%d", &emptyserial, &id_ard, &x_ard, &y_ard, &heading_ard);    //add emptyserial because the first value doesn't get sent/ received
     
     Serial.print("You sent me: ");
     Serial.print(data);
