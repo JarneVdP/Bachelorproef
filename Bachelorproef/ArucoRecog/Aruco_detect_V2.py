@@ -39,7 +39,8 @@ def rotationMatrixToEulerAngles(R) :
 
 emptyserial = -99   #add a burner variable because the arduino doesn't read the first values
 def sendserial(idTag, x, y, heading):
-    ser = serial.Serial('/dev/ttyUSB0', 115200, timeout=1) #ttyACM0 USB0 ls /dev/tty*
+    #ser = serial.Serial('/dev/ttyUSB0', 115200, timeout=1) #ttyACM0 USB0 ls /dev/tty*
+    ser = serial.Serial('/dev/ttyACM0', 115200, timeout=1) #ttyACM0 USB0 ls /dev/tty*
     ser.reset_input_buffer()
     ser.write(str.encode("%d;%d;%d;%d;%d\n" % (emptyserial ,idTag,x, y, heading)))
     line = ser.readline().decode('utf-8').rstrip()
@@ -107,15 +108,8 @@ send_x = 0
 send_y = 0
 send_heading = 0
 
-# if total time delta is bigger than 84, send data to arduino
-delta_totaltime = dt.datetime.now()-t_totaltime
-if delta_totaltime.seconds >= 84:
-    sendserial(-1, 5, 5, math.degrees(0))
-    #print(tvec_str)
-    t = dt.datetime.now()
-
-
 while True:
+
     ret, frame = cap.read()
     frame = cv2.rotate(frame, cv2.ROTATE_180)
     #change threshold to adjust the detection
@@ -123,10 +117,13 @@ while True:
     
     #apply parameters on aruco detectMarkers
     corners, ids, rejected = cv2.aruco.detectMarkers(gray, aruco_dict, camera_matrix, camera_distortion)#, parameters=parameters)
-
-
-    #gray_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)   
-    #corners, ids, rejected = cv2.aruco.detectMarkers(gray_frame, aruco_dict, camera_matrix, camera_distortion)
+    
+    # if total time delta is bigger than 84, send data to arduino
+    delta_totaltime = dt.datetime.now()-t_totaltime
+    if delta_totaltime.seconds >= 84:
+        sendserial(-1, 5, 5, math.degrees(0))
+        ids = None
+        #print(tvec_str)
 
     if ids is not None:
         cv2.aruco.drawDetectedMarkers(frame, corners)
@@ -154,21 +151,24 @@ while True:
         distance = math.sqrt(realworld_tvec[0]**2 + realworld_tvec[1]**2) #te testen
         angle = math.degrees(math.atan2(realworld_tvec[0], realworld_tvec[1]))    #te testen
 
+        #sample is to the right of the robot -> y is negative
+        #sample is to the left of the robot -> y is positive
+
         if math.degrees(yaw) > 0.0 and math.degrees(yaw) < 90.0:
             send_x = realworld_tvec[1]
-            send_y = realworld_tvec[0]
+            send_y = -realworld_tvec[0] 
             send_heading = math.degrees(yaw)
         if math.degrees(yaw) > 90.0 and math.degrees(yaw) < 180.0:
-            send_x = realworld_tvec[0]
-            send_y = realworld_tvec[1]
+            send_x = -realworld_tvec[1]
+            send_y = realworld_tvec[0] 
             send_heading = math.degrees(yaw) 
         if math.degrees(yaw) < 0.0 and math.degrees(yaw) > -90.0:
-            send_x = -realworld_tvec[0]
-            send_y = -realworld_tvec[1]
+            send_x = realworld_tvec[0]
+            send_y = realworld_tvec[1] 
             send_heading = math.degrees(yaw)
         if math.degrees(yaw) < -90.0 and math.degrees(yaw) > -180.0:
-            send_x = realworld_tvec[1]
-            send_y = -realworld_tvec[0]
+            send_x = -realworld_tvec[1]
+            send_y = realworld_tvec[0] 
             send_heading = math.degrees(yaw) 
     
 
