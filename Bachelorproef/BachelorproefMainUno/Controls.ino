@@ -11,8 +11,8 @@ void achteruit()
   digitalWrite(in2, HIGH);
   digitalWrite(in3, HIGH);
   digitalWrite(in4, LOW);
-  analogWrite(enA, 200);
-  analogWrite(enB, 200);
+  analogWrite(enA, 255);
+  analogWrite(enB, 255);
 }
 void vooruit()
 {
@@ -20,24 +20,24 @@ void vooruit()
   digitalWrite(in2, LOW);
   digitalWrite(in3, LOW);
   digitalWrite(in4, HIGH);
-  analogWrite(enA, 200);
-  analogWrite(enB, 200);
+  analogWrite(enA, 255);
+  analogWrite(enB, 255);
 }
-void eigenasdraaienrechts()
+void eigenasdraaienlinks()
 {
   digitalWrite(in1, HIGH);
   digitalWrite(in2, LOW);
   digitalWrite(in3, HIGH);
   digitalWrite(in4, LOW);
-  analogWrite(enA, 175);
-  analogWrite(enB, 175);
+  analogWrite(enA, 255);
+  analogWrite(enB, 255);
 }
-void eigenasdraaienlinks()
+void eigenasdraaienrechts()
 {
   digitalWrite(in1, LOW);
   digitalWrite(in2, HIGH);
   digitalWrite(in3, LOW);
   digitalWrite(in4, HIGH);
-  analogWrite(enA, 175);
-  analogWrite(enB, 175);
+  analogWrite(enA, 255);
+  analogWrite(enB, 255);
 }

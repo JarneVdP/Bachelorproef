@@ -104,10 +104,10 @@ void setup() {
   pinMode(stepPin, OUTPUT);
   pinMode(dirPin, OUTPUT);
 
-  for (int i = 0; i < 10; i++) {
-    backDistancearr += measureDist(USsensorBackTrigger1, USsensorBackEcho1);  //x start
-    leftDistancearr += measureDist(USsensorLeftTrigger1, USsensorLeftEcho1);  //y start
-  }
+  //for (int i = 0; i < 10; i++) {
+    //backDistancearr += measureDist(USsensorBackTrigger1, USsensorBackEcho1);  //x start
+    //leftDistancearr += measureDist(USsensorLeftTrigger1, USsensorLeftEcho1);  //y start
+  //}
   backDistance = backDistancearr / 20;
   leftDistance = leftDistancearr / 20;
   Serial.println("back distance:");
@@ -117,7 +117,8 @@ void setup() {
 }
 //waardes van robot
 float headingingraden= 0 * (3.14159265359 / 180);
-PositionStruct Position = {leftDistance, backDistance, headingingraden}; // x en y zijn y en x in speelveld, dus omdraaien hier
+//PositionStruct Position = {leftDistance, backDistance, headingingraden}; // x en y zijn y en x in speelveld, dus omdraaien hier
+PositionStruct Position = {0, 0, 0}; // x en y zijn y en x in speelveld, dus omdraaien hier
 
 int emptyserial, id_ard, x_ard, y_ard, heading_ard = 0;
 
@@ -153,7 +154,7 @@ void loop(){
   if (Serial.available() > 0 && state_serial == 0) { //receive data from raspberry pi
     data = Serial.readStringUntil('\n');
     sscanf(data.c_str(), "%d;%d;%d;%d;%d", &emptyserial, &id_ard, &x_ard, &y_ard, &heading_ard);    //add emptyserial because the first value doesn't get sent/ received
-    /* Serial.print(id_ard); Serial.print(","); Serial.print(x_ard); Serial.print(",");Serial.print(y_ard); Serial.print(","); Serial.println(heading_ard); */
+    //Serial.print(id_ard); Serial.print(","); Serial.print(x_ard); Serial.print(",");Serial.print(y_ard); Serial.print(","); Serial.println(heading_ard);
     if (id_ard != 0) { state_serial = 1;}
   }
   //if (id_ard > 0){ digitalWrite(led1, HIGH);} //6

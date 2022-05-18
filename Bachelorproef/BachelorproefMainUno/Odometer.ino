@@ -65,15 +65,15 @@ void odometry(PositionStruct &Position) {
 
   //new position
   if (Position.heading > (-90* 3.14159265 / 180) && Position.heading < (90* 3.14159265 / 180)) {
-    Position.x_pos += dx * cos(theta) - dy * sin(theta); //sin and cos in radians
-    Position.y_pos += dx * sin(theta) + dy * cos(theta);
+    Position.x_pos += dx * cos(Position.heading) - dy * sin(Position.heading); //sin and cos in radians
+    Position.y_pos += -1 * (dx * sin(Position.heading) + dy * cos(Position.heading));
   }
   else if (Position.heading < (-90* 3.14159265 / 180) || Position.heading > (90* 3.14159265 / 180)) {
-    Position.x_pos -= dx * cos(theta) - dy * sin(theta); //sin and cos in radians
-    Position.y_pos -= dx * sin(theta) + dy * cos(theta);
+    Position.x_pos -= (-1)*dx * cos(Position.heading) - (-1)* dy * sin(Position.heading); //sin and cos in radians
+    Position.y_pos -= -1* (dx * sin(Position.heading) + dy * cos(Position.heading));
   } 
   //heading += heading + (deltatheta/float(2));
-  Position.heading += deltatheta;
+  Position.heading += -1 *deltatheta;
   if (Position.heading < -6.2831853072){  //6.2831853072 = 360 degrees
     Position.heading += 6.2831853072;}
     
@@ -97,12 +97,12 @@ void odometry(PositionStruct &Position) {
   prev_positionFront = newFront; 
 
   //reset
-  if (Serial.available()) {
+  /*if (Serial.available()) {
     Serial.read();
     Serial.println("Reset both knobs to zero");
     knobLeft.write(0);
     knobRight.write(0);
     knobFront.write(0);
     Position.heading = 0;
-  }
+  }*/
 }
