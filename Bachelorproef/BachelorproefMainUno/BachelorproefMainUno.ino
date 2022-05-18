@@ -1,16 +1,17 @@
 //Motor A
 int enA = 10; 
-int in1 = 39; //9
-int in2 = 37; //7
+int in1 = 9; //9
+int in2 = 7; //7
 //Motor B
-int enB = 38; //8
+int enB = 8; //8
 int in3 = 5; 
 int in4 = 4; 
-
+/*
 int led1 = 6;
 int led2 = 7;
 int led3 = 8;
 int led4 = 15;
+*/
 //###########
 //#US Sensor#
 //###########
@@ -76,11 +77,12 @@ void setup() {
   pinMode(in2, OUTPUT);
   pinMode(in3, OUTPUT);
   pinMode(in4, OUTPUT);
-
+  /*
   pinMode(led1, OUTPUT);
   pinMode(led2, OUTPUT);
   pinMode(led3, OUTPUT);
   pinMode(led4, OUTPUT);
+  */
   
   pinMode(USsensorFrontTrigger1, OUTPUT);
   pinMode(USsensorFrontEcho1, INPUT);
