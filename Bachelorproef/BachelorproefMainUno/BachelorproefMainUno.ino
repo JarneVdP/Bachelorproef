@@ -150,24 +150,26 @@ float camera_heading = 60; // * (3.14159265359/180);
 String data = "";
 
 void loop(){
-  odometry(Position); //update positie
-  if (Serial.available() > 0 && state_serial == 0) { //receive data from raspberry pi
-    recvWithStartEndMarkers();
-    replyToPython();
+  //odometry(Position); //update positie
+  recvWithStartEndMarkers();
+  replyToPython();
+  //if (Serial.available() > 0 && state_serial == 0) { //receive data from raspberry pi
+    //recvWithStartEndMarkers();
+    //replyToPython();
     //data = Serial.readStringUntil('\n');
     //sscanf(data.c_str(), "%d;%d;%d;%d;%d", &emptyserial, &id_ard, &x_ard, &y_ard, &heading_ard);    //add emptyserial because the first value doesn't get sent/ received
     //Serial.print(id_ard); Serial.print(","); Serial.print(x_ard); Serial.print(",");Serial.print(y_ard); Serial.print(","); Serial.println(heading_ard);
     //Serial.println(data);
-    if (id_ard != 0) { state_serial = 1;}
-  }
+    //if (id_ard != 0) { state_serial = 1;}
+  //}
   
   
   //Serial.print(id_ard); Serial.print(","); Serial.print(x_ard); Serial.print(",");Serial.print(y_ard); Serial.print(","); Serial.println(heading_ard);
   //Serial.println(data);
-  if (id_ard > 0){ vooruit();} //6
-  else{
-    eigenasdraaienlinks();
-  }
+  //if (id_ard > 0){ vooruit();} //6
+  //else{
+    //eigenasdraaienlinks();
+  //}
   //if (x_ard > 0){ achteruit();} //7
   //if (y_ard > 0){ eigenasdraaienlinks();} //8
   //if (heading_ard > 0){ eigenasdraaienrechts();} //15
