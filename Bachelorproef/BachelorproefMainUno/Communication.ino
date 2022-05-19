@@ -9,27 +9,6 @@ boolean newData = false;
 byte ledPin = 13;   // the onboard LED
 
 //===============
-void setup() {
-    Serial.begin(115200);
-
-    pinMode(ledPin, OUTPUT);
-    digitalWrite(ledPin, HIGH);
-    delay(200);
-    digitalWrite(ledPin, LOW);
-    delay(200);
-    digitalWrite(ledPin, HIGH);
-
-    Serial.println("<Arduino is ready>");
-}
-
-//===============
-
-void loop() {
-    recvWithStartEndMarkers();
-    replyToPython();
-}
-
-//===============
 
 void recvWithStartEndMarkers() {
     static boolean recvInProgress = false;
@@ -38,7 +17,7 @@ void recvWithStartEndMarkers() {
     char endMarker = '>';
     char rc;
 
-    while (Serial.available() > 0 && newData == false) {
+    while (Serial.available() > 0 &&newData == false) {
         rc = Serial.read();
 
         if (recvInProgress == true) {
@@ -61,19 +40,18 @@ void recvWithStartEndMarkers() {
             recvInProgress = true;
         }
     }
+    sscanf(receivedChars.c_str(), "%d;%d;%d;%d;%d", &emptyserial, &id_ard, &x_ard, &y_ard, &heading_ard);    //add emptyserial because the first value doesn't get sent/ received
 }
 
 //===============
 
 void replyToPython() {
     if (newData == true) {
-        Serial.print("<This just in ... ");
-        Serial.print(receivedChars);
-        Serial.print("   ");
-        Serial.print(millis());
+        Serial.print("<Arduino replied ");
+        Serial.print(id_ard);
+  
         Serial.print('>');
             // change the state of the LED everytime a reply is sent
-        digitalWrite(ledPin, ! digitalRead(ledPin));
         newData = false;
     }
 }
