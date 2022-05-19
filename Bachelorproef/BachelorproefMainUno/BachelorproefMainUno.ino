@@ -155,13 +155,20 @@ void loop(){
     data = Serial.readStringUntil('\n');
     sscanf(data.c_str(), "%d;%d;%d;%d;%d", &emptyserial, &id_ard, &x_ard, &y_ard, &heading_ard);    //add emptyserial because the first value doesn't get sent/ received
     //Serial.print(id_ard); Serial.print(","); Serial.print(x_ard); Serial.print(",");Serial.print(y_ard); Serial.print(","); Serial.println(heading_ard);
+    //Serial.println(data);
     if (id_ard != 0) { state_serial = 1;}
   }
-  //if (id_ard > 0){ digitalWrite(led1, HIGH);} //6
-  //if (x_ard > 0){ digitalWrite(led2, HIGH);} //7
-  //if (y_ard > 0){ digitalWrite(led3, HIGH);} //8
-  //if (heading_ard > 0){ digitalWrite(led4, HIGH);} //15
   
+  //Serial.print(id_ard); Serial.print(","); Serial.print(x_ard); Serial.print(",");Serial.print(y_ard); Serial.print(","); Serial.println(heading_ard);
+  //Serial.println(data);
+  if (id_ard > 0){ vooruit();} //6
+  else{
+    eigenasdraaienlinks();
+  }
+  //if (x_ard > 0){ achteruit();} //7
+  //if (y_ard > 0){ eigenasdraaienlinks();} //8
+  //if (heading_ard > 0){ eigenasdraaienrechts();} //15
+  /*
   if (id_ard == -1) { //mogelijks nog een waarde erbij doen indien id_ard gereset wordt wanneer de camera de sample niet meer ziet
     state_ExcavationSquare = 2;
     state_sample = 2;
@@ -297,6 +304,7 @@ void loop(){
     heading_statement = 0;
     id_ard = 0;
   }
+  */
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
