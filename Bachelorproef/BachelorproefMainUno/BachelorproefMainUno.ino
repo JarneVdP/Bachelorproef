@@ -6,11 +6,11 @@ int in2 = 7; //7
 int enB = 8; //8
 int in3 = 5; 
 int in4 = 4; 
-/*
+/* debugger leds
 int led1 = 6;
 int led2 = 7;
 int led3 = 8;
-int led4 = 15;
+int led4 = 9;
 */
 //###########
 //#US Sensor#
@@ -18,18 +18,18 @@ int led4 = 15;
 //Pinnen voor ultrasonic sensor
 //front
 
-static const int USsensorFrontTrigger1 = 50; //rechts
-static const int USsensorFrontEcho1 = 52;
-static const int USsensorFrontTrigger2 = 46; //links
-static const int USsensorFrontEcho2 = 48;
+static const int USsensorFrontTrigger1 = 34; //rechts
+static const int USsensorFrontEcho1 = 32;
+static const int USsensorFrontTrigger2 = 36; //links
+static const int USsensorFrontEcho2 = 38;
 //left
-static const int USsensorLeftTrigger1 = 42;
-static const int USsensorLeftEcho1 = 44;
+static const int USsensorLeftTrigger1 = 44;
+static const int USsensorLeftEcho1 = 42;
 int leftDistance = 0;
 int leftDistancearr = 0;
 //right
-static const int USsensorRightTrigger1 = 51;
-static const int USsensorRightEcho1 = 53;
+static const int USsensorRightTrigger1 = 37;
+static const int USsensorRightEcho1 = 35;
 //back
 static const int USsensorBackTrigger1 = 39;
 static const int USsensorBackEcho1 = 41;
@@ -63,14 +63,17 @@ struct PositionStruct {
   float heading;
 };
 
+byte ledPin = 13;   // the onboard LED
 
 int counter = 0;
 int statement = 0;
 int heading_statement = 0;
 float heading_doel;
 
+
 void setup() {
   Serial.begin(115200);
+
   pinMode(enA, OUTPUT);
   pinMode(enB, OUTPUT);
   pinMode(in1, OUTPUT);
@@ -89,7 +92,7 @@ void setup() {
   pinMode(USsensorFrontTrigger2, OUTPUT);
   pinMode(USsensorFrontEcho2, INPUT);
   pinMode(USsensorLeftTrigger1, OUTPUT);
-  pinMode(USsensorFrontEcho1, INPUT);
+  pinMode(USsensorLeftEcho1, INPUT);
   pinMode(USsensorRightTrigger1, OUTPUT);
   pinMode(USsensorRightEcho1, INPUT);
   pinMode(USsensorBackTrigger1, OUTPUT);
@@ -103,17 +106,22 @@ void setup() {
   pinMode(mosfet,OUTPUT);
   pinMode(stepPin, OUTPUT);
   pinMode(dirPin, OUTPUT);
-
-  //for (int i = 0; i < 10; i++) {
-    //backDistancearr += measureDist(USsensorBackTrigger1, USsensorBackEcho1);  //x start
+  for (int i = 0; i < 10; i++) {
+    backDistancearr += measureDist(USsensorBackTrigger1, USsensorBackEcho1);  //x start
     //leftDistancearr += measureDist(USsensorLeftTrigger1, USsensorLeftEcho1);  //y start
-  //}
-  backDistance = backDistancearr / 20;
-  leftDistance = leftDistancearr / 20;
-  Serial.println("back distance:");
-  Serial.print(backDistance);
-  Serial.println("left distance:");
+    Serial.print(i);
+    Serial.print(" , ");
+    Serial.println(backDistancearr );
+  }
+  backDistance = backDistancearr / 10;
+  //leftDistance = leftDistancearr / 20;
+  Serial.print("back distance: ");
+  Serial.println(backDistance);
+  /*
+  Serial.println("<left distance:>");
   Serial.print(leftDistance);
+  */
+  Serial.println("<Arduino is ready>");
 }
 //waardes van robot
 float headingingraden= 0 * (3.14159265359 / 180);
@@ -149,31 +157,29 @@ float camera_heading = 60; // * (3.14159265359/180);
 //Serial communication rpi - ard
 String data = "";
 
+
 void loop(){
-  //odometry(Position); //update positie
-  recvWithStartEndMarkers();
-  replyToPython();
-  //if (Serial.available() > 0 && state_serial == 0) { //receive data from raspberry pi
+  /*
+  odometry(Position); //update positie
+  
+  if (Serial.available() > 0 && state_serial == 0) { //receive data from raspberry pi
     //recvWithStartEndMarkers();
-    //replyToPython();
-    //data = Serial.readStringUntil('\n');
+    
+    data = Serial.readStringUntil('\n');
     //sscanf(data.c_str(), "%d;%d;%d;%d;%d", &emptyserial, &id_ard, &x_ard, &y_ard, &heading_ard);    //add emptyserial because the first value doesn't get sent/ received
     //Serial.print(id_ard); Serial.print(","); Serial.print(x_ard); Serial.print(",");Serial.print(y_ard); Serial.print(","); Serial.println(heading_ard);
     //Serial.println(data);
     //if (id_ard != 0) { state_serial = 1;}
-  //}
-  
+  }
+  sscanf(data.c_str(), "%d;%d;%d;%d;%d", &emptyserial, &id_ard, &x_ard, &y_ard, &heading_ard);    //add emptyserial because the first value doesn't get sent/ received
   
   //Serial.print(id_ard); Serial.print(","); Serial.print(x_ard); Serial.print(",");Serial.print(y_ard); Serial.print(","); Serial.println(heading_ard);
-  //Serial.println(data);
-  //if (id_ard > 0){ vooruit();} //6
-  //else{
-    //eigenasdraaienlinks();
-  //}
-  //if (x_ard > 0){ achteruit();} //7
-  //if (y_ard > 0){ eigenasdraaienlinks();} //8
-  //if (heading_ard > 0){ eigenasdraaienrechts();} //15
-  /*
+  Serial.println(id_ard);
+  if (id_ard > 0){ digitalWrite(led1, HIGH);} //6
+  if (x_ard > 0){ digitalWrite(led2, HIGH);} //7
+  if (y_ard > 0){ digitalWrite(led3, HIGH);} //8
+  if (heading_ard > 0){ digitalWrite(led4, HIGH);} //9
+  
   if (id_ard == -1) { //mogelijks nog een waarde erbij doen indien id_ard gereset wordt wanneer de camera de sample niet meer ziet
     state_ExcavationSquare = 2;
     state_sample = 2;
