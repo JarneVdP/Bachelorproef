@@ -19,7 +19,7 @@ def arucorec():
     parameters = cv2.aruco.DetectorParameters_create()
 
     # initialize the webcam as "camera" object
-    camera = cv2.VideoCapture(0)
+    camera = cv2.VideoCapture(-1, cv2.CAP_V4L)
 
     # loop that runs the program forever
     # at least until the "q" key is pressed
