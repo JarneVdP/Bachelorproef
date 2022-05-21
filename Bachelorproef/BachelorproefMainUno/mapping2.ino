@@ -53,9 +53,9 @@ void GoTo2(double x, float heading, double x_station, float heading_station) {
     }
   }
   /*
-  Serial.println("x");
-  Serial.println(x);
-  Serial.println("x_station");
-  Serial.println(x_station);
+    Serial.println("x");
+    Serial.println(x);
+    Serial.println("x_station");
+    Serial.println(x_station);
   */
 }
