@@ -48,7 +48,8 @@ def sendserial(idTag, x, y, heading):
     starttime = time.time()
     endtime = time.time()
     while endtime - starttime < 3:
-        ser.write(str.encode("%d;%d;%d;%d;%d\n" % (emptyserial ,idTag,x, y, heading)))
+        ser.write(("%d;%d;%d;%d;%d\n" % (emptyserial ,idTag,x, y, heading)).encode('utf-8'))
+        #ser.write("Hello from Raspberry Pi!\n".encode('utf-8'))
         line = ser.readline().decode('utf-8').rstrip()
         print(line)
         time.sleep(1)
