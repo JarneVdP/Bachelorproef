@@ -1,11 +1,11 @@
 //Motor A
-int enA = 10; 
+int enA = 8; //10
 int in1 = 9; //9
 int in2 = 7; //7
 //Motor B
-int enB = 8; //8
-int in3 = 5; 
-int in4 = 4; 
+int enB = 6; //8
+int in3 = 5; //5
+int in4 = 4; //4
 /* debugger leds
 int led1 = 6;
 int led2 = 7;
@@ -25,7 +25,7 @@ static const int USsensorFrontEcho2 = 38;
 //left
 static const int USsensorLeftTrigger1 = 44;
 static const int USsensorLeftEcho1 = 42;
-int leftDistance = 0;
+int leftDistance;
 int leftDistancearr = 0;
 //right
 static const int USsensorRightTrigger1 = 37;
@@ -33,7 +33,7 @@ static const int USsensorRightEcho1 = 35;
 //back
 static const int USsensorBackTrigger1 = 39;
 static const int USsensorBackEcho1 = 41;
-int backDistance = 0;
+int backDistance;
 int backDistancearr = 0;
 
 //servo2
@@ -62,8 +62,8 @@ struct PositionStruct {
   double y_pos;
   float heading;
 };
+PositionStruct Position = {0, 0, 0};
 
-byte ledPin = 13;   // the onboard LED
 
 int counter = 0;
 int statement = 0;
@@ -72,7 +72,7 @@ float heading_doel;
 
 
 void setup() {
-  Serial.begin(115200);
+  Serial.begin(9600);
 
   pinMode(enA, OUTPUT);
   pinMode(enB, OUTPUT);
@@ -97,7 +97,7 @@ void setup() {
   pinMode(USsensorRightEcho1, INPUT);
   pinMode(USsensorBackTrigger1, OUTPUT);
   pinMode(USsensorBackEcho1, INPUT);
-  
+  //Moet niet gebeuren op de mega
   mysmartservo.begin(115200);
   delay(5);
   mysmartservo.assignDevIdRequest();
@@ -106,33 +106,29 @@ void setup() {
   pinMode(mosfet,OUTPUT);
   pinMode(stepPin, OUTPUT);
   pinMode(dirPin, OUTPUT);
+  //
   for (int i = 0; i < 10; i++) {
     backDistancearr += measureDist(USsensorBackTrigger1, USsensorBackEcho1);  //x start
-    //leftDistancearr += measureDist(USsensorLeftTrigger1, USsensorLeftEcho1);  //y start
-    Serial.print(i);
-    Serial.print(" , ");
-    Serial.println(backDistancearr );
+    leftDistancearr += measureDist(USsensorLeftTrigger1, USsensorLeftEcho1);  //y start
   }
-  backDistance = backDistancearr / 10;
-  //leftDistance = leftDistancearr / 20;
+  Position.x_pos = (backDistancearr / 10  )+ 15;
+  Position.y_pos = (leftDistancearr / 10  )+ 15;
   Serial.print("back distance: ");
-  Serial.println(backDistance);
-  /*
-  Serial.println("<left distance:>");
-  Serial.print(leftDistance);
-  */
+  Serial.println(Position.x_pos);
+  Serial.print("<left distance:>");
+  Serial.println(Position.y_pos);
+  
   Serial.println("<Arduino is ready>");
 }
 //waardes van robot
-float headingingraden= 0 * (3.14159265359 / 180);
-//PositionStruct Position = {leftDistance, backDistance, headingingraden}; // x en y zijn y en x in speelveld, dus omdraaien hier
-PositionStruct Position = {0, 0, 0}; // x en y zijn y en x in speelveld, dus omdraaien hier
+float headingingraden= 0;
+//PositionStruct Position = {backDistance , leftDistance , headingingraden}; // x en y zijn y en x in speelveld, dus omdraaien hier
 
 int emptyserial, id_ard, x_ard, y_ard, heading_ard = 0;
 
 //locaties van de samples
-int x_sample[] = {40, 60, 0};
-int y_sample[] = {30, 70, 0};
+int x_sample[] = {80, 60, 0};
+int y_sample[] = {125, 70, 0};
 int samples_place[] = {3, 3};
 int heading_sample[] = {0, 0};
 int sample_counter = 0; // bepalen of samples palced >=3
@@ -159,26 +155,26 @@ String data = "";
 
 
 void loop(){
-  /*
   odometry(Position); //update positie
-  
-  if (Serial.available() > 0 && state_serial == 0) { //receive data from raspberry pi
-    //recvWithStartEndMarkers();
-    
+  /*
+  if (Serial.available() > 0 && state_serial == 0) { //receive data from raspberry pi    
     data = Serial.readStringUntil('\n');
-    //sscanf(data.c_str(), "%d;%d;%d;%d;%d", &emptyserial, &id_ard, &x_ard, &y_ard, &heading_ard);    //add emptyserial because the first value doesn't get sent/ received
+    sscanf(data.c_str(), "%d;%d;%d;%d;%d", &emptyserial, &id_ard, &x_ard, &y_ard, &heading_ard);    //add emptyserial because the first value doesn't get sent/ received
     //Serial.print(id_ard); Serial.print(","); Serial.print(x_ard); Serial.print(",");Serial.print(y_ard); Serial.print(","); Serial.println(heading_ard);
-    //Serial.println(data);
-    //if (id_ard != 0) { state_serial = 1;}
+    Serial.print("You sent me: ");
+    Serial.println(data);
+//  if (id_ard != 0) { state_serial = 1;}
   }
-  sscanf(data.c_str(), "%d;%d;%d;%d;%d", &emptyserial, &id_ard, &x_ard, &y_ard, &heading_ard);    //add emptyserial because the first value doesn't get sent/ received
-  
+  */
   //Serial.print(id_ard); Serial.print(","); Serial.print(x_ard); Serial.print(",");Serial.print(y_ard); Serial.print(","); Serial.println(heading_ard);
-  Serial.println(id_ard);
+  //Serial.println(data);
+  /* DEBUG
   if (id_ard > 0){ digitalWrite(led1, HIGH);} //6
   if (x_ard > 0){ digitalWrite(led2, HIGH);} //7
   if (y_ard > 0){ digitalWrite(led3, HIGH);} //8
   if (heading_ard > 0){ digitalWrite(led4, HIGH);} //9
+  */
+  /*
   
   if (id_ard == -1) { //mogelijks nog een waarde erbij doen indien id_ard gereset wordt wanneer de camera de sample niet meer ziet
     state_ExcavationSquare = 2;
@@ -190,9 +186,9 @@ void loop(){
     heading_doel = heading_station(Position.x_pos,  Position.y_pos,  backDistance,  leftDistance); //berekenen van de hoek tussen huidige positie en station
     heading_statement = 1;
     }
-    goTo(Position.x_pos, Position.y_pos, backDistance, leftDistance ,Position.heading, heading_doel);
+    goStation(Position.x_pos, Position.y_pos, backDistance, leftDistance ,Position.heading, heading_doel);
   }  
-
+  */
   odometry(Position); //update positie
 
   int frontDistance = measureDist(USsensorFrontTrigger1, USsensorFrontEcho1);
@@ -206,21 +202,39 @@ void loop(){
     Serial.println("All samples in excavation1 place stored. Searching in excavation2/turn square");
     sample_counter = 1;
   }
+  Serial.print("state_ExcavationSquare");
+  Serial.println(state_ExcavationSquare);
+  Serial.print("state_sample");
+  Serial.println(state_sample);
+  Serial.print("state_station");
+  Serial.println(state_station);
   // go to sample state_ExcavationSquare
   if (state_ExcavationSquare  == 0  && state_sample == 0 && state_station == 0) {
-    //Serial.println("go to excavation square");
-    Serial.println(data);
+    Serial.println("go to excavation square");
+    //Serial.println(data);
     odometry(Position); //update positie
-    goTo(Position.x_pos,  Position.y_pos,  x_sample[sample_counter],  y_sample[sample_counter],  Position.heading, heading_sample[sample_counter]);
-    if (Position.x_pos > x_sample[sample_counter] - 5 && Position.x_pos < x_sample[sample_counter] + 5 && Position.y_pos > y_sample[sample_counter] - 5 && Position.y_pos < y_sample[sample_counter] + 5){
+    // Nog aan te passen dat die eenmaal berekend wordt
+    if ( heading_statement == 0) { //hoek bepalen + afstand berekenen
+        odometry(Position); //update positie
+        Serial.println(x_sample[sample_counter]);
+        heading_doel = heading_station(Position.x_pos,  Position.y_pos,   x_sample[sample_counter],  y_sample[sample_counter]); //berekenen van de hoek tussen huidige positie en station
+        heading_statement = 1;
+        Serial.print("heading_doel");
+        Serial.println(heading_doel);
+      }
+    goStation(Position.x_pos,  Position.y_pos,  x_sample[sample_counter],  y_sample[sample_counter],  Position.heading, heading_doel);
+    if (Position.x_pos > x_sample[sample_counter] - 5 && Position.x_pos < x_sample[sample_counter] + 5) {
       state_ExcavationSquare = 1;
+      heading_statement = 0;
+      //id_ard = 13;
+      //state_sample = 1;
     }
   }
   // stand still and check for sample
   if (state_ExcavationSquare  != 0  && state_sample == 0 && state_station == 0) {
     Serial.println(" stand still and check for sample");
     odometry(Position); //update positie
-    stilstand();
+    GoTo2( Position.x_pos, Position.heading, Position.x_pos, 0.01);
     if (id_ard != 0) {
       //move to sample
       Serial.println("move to sample");
@@ -232,10 +246,12 @@ void loop(){
         y_ard += Position.y_pos;
       }
       odometry(Position); //update positie
-      goTo(Position.x_pos, Position.y_pos, x_ard, y_ard ,Position.heading, heading_doel);
+      goStation(Position.x_pos, Position.y_pos, x_ard, y_ard ,Position.heading, heading_doel);
     }
+  }
+   /* 
     //grab sample
-    if (Position.x_pos > x_ard - 5 && Position.x_pos < x_ard + 5 && Position.y_pos > y_ard - 5 && Position.y_pos < y_ard + 5){
+    if (Position.x_pos > x_ard - 5 && Position.x_pos < x_ard + 5){   // && Position.y_pos > y_ard - 5 && Position.y_pos < y_ard + 5){
       odometry(Position); //update positie
       Serial.println("grab sample");
       stilstand();
@@ -264,8 +280,8 @@ void loop(){
       heading_doel = heading_station(Position.x_pos,  Position.y_pos,  x_station,  y_stationBlue); //berekenen van de hoek tussen huidige positie en station
       heading_statement = 1;
     }
-    goTo(Position.x_pos, Position.y_pos, x_station, y_stationBlue, Position.heading, heading_doel);
-    if (Position.x_pos > x_station - 5 && Position.x_pos < x_station + 5 && Position.y_pos > y_stationBlue - 5 && Position.y_pos < y_stationBlue + 5){
+    goStation(Position.x_pos, Position.y_pos, x_station, y_stationBlue, Position.heading, heading_doel);
+    if (Position.x_pos < x_station - 5 && Position.x_pos < x_station + 5){
       state_station = 1;
       odometry(Position); //update positie
     }
@@ -279,7 +295,7 @@ void loop(){
       heading_statement = 1;
     }
     odometry(Position); //update positie
-    goTo(Position.x_pos, Position.y_pos, x_station, y_stationRed, Position.heading, heading_doel);
+    goStation(Position.x_pos, Position.y_pos, x_station, y_stationRed, Position.heading, heading_doel);
     if (Position.x_pos > x_station - 5 && Position.x_pos < x_station + 5 && Position.y_pos > y_stationRed - 5 && Position.y_pos < y_stationRed + 5){
       odometry(Position); //update positie
       state_station = 1;
@@ -294,7 +310,7 @@ void loop(){
       heading_doel = heading_station(Position.x_pos,  Position.y_pos,  x_station,  y_stationGreen); //berekenen van de hoek tussen huidige positie en station
       heading_statement = 1;
     }
-    goTo(Position.x_pos, Position.y_pos, x_station, y_stationGreen, Position.heading, heading_doel);
+    goStation(Position.x_pos, Position.y_pos, x_station, y_stationGreen, Position.heading, heading_doel);
     if (Position.x_pos > x_station - 5 && Position.x_pos < x_station + 5 && Position.y_pos > y_stationGreen - 5 && Position.y_pos < y_stationGreen + 5){
       state_station = 1;
       odometry(Position); //update positie
@@ -319,7 +335,7 @@ void loop(){
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//goTo( Position.x_pos,  Position.y_pos,  x_station,  y_stationGreen,  Position.heading, heading_doel ); //naar station rijden
+//goStation( Position.x_pos,  Position.y_pos,  x_station,  y_stationGreen,  Position.heading, heading_doel ); //naar station rijden
 //mapp( Position.x_pos,  Position.heading,  camera_y,  camera_heading); //naar sample rijden vanaf huidige positie
 //mapp , mapping1 wordt (denk ik) nieet meer gebruikt
 

@@ -1,8 +1,4 @@
-const byte numChars = 64;
-char receivedChars[numChars];
-
-boolean newData = false;
-
+/*
 void recvWithStartEndMarkers() {
     static boolean recvInProgress = false;
     static byte ndx = 0;
@@ -33,7 +29,6 @@ void recvWithStartEndMarkers() {
             recvInProgress = true;
         }
     }
-    //sscanf(data.c_str(), "%d;%d;%d;%d;%d", &emptyserial, &id_ard, &x_ard, &y_ard, &heading_ard);    //add emptyserial because the first value doesn't get sent/ received
 }
 
 //===============
@@ -41,10 +36,11 @@ void recvWithStartEndMarkers() {
 void replyToPython() {
     if (newData == true) {
         Serial.print("<This just in ... ");
-        Serial.print(receivedChars);
+        Serial.print(id_ard);
+        Serial.print("   ");
+        Serial.print(millis());
         Serial.print('>');
         newData = false;
     }
 }
-
-//===============
+*/

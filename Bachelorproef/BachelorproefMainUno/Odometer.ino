@@ -17,9 +17,9 @@ Encoder knobLeft(18, 19); //white/white - orange/green
 Encoder knobFront(20, 21); //yellow/white - purple/green
 
 
-int positionLeft  = 1;
-int positionRight = 1;
-int positionFront = 1;
+int positionLeft ;
+int positionRight ;
+int positionFront ;
 
 double newLeft, newRight, newFront, prev_positionLeft, prev_positionRight, prev_positionFront;
 double delta_positionLeft, delta_positionRight, delta_positionFront;
@@ -66,7 +66,7 @@ void odometry(PositionStruct &Position) {
   //new position
   if (Position.heading > (-90* 3.14159265 / 180) && Position.heading < (90* 3.14159265 / 180)) {
     Position.x_pos += dx * cos(Position.heading) - dy * sin(Position.heading); //sin and cos in radians
-    Position.y_pos += -1 * (dx * sin(Position.heading) + dy * cos(Position.heading));
+    Position.y_pos += dx * sin(Position.heading) + dy * cos(Position.heading);
   }
   else if (Position.heading < (-90* 3.14159265 / 180) || Position.heading > (90* 3.14159265 / 180)) {
     Position.x_pos -= (-1)*dx * cos(Position.heading) - (-1)* dy * sin(Position.heading); //sin and cos in radians
@@ -74,6 +74,7 @@ void odometry(PositionStruct &Position) {
   } 
   //heading += heading + (deltatheta/float(2));
   Position.heading += -1 *deltatheta;
+
   if (Position.heading < -6.2831853072){  //6.2831853072 = 360 degrees
     Position.heading += 6.2831853072;}
     
