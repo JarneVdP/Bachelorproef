@@ -1,12 +1,13 @@
 #!/usr/bin/env python3
 from matplotlib.pyplot import gray
 import numpy as np
-import cv2, math, time, serial
+import cv2, math, time, serial, sched
 import datetime as dt
 
 
 t = dt.datetime.now()
 t_totaltime = dt.datetime.now()
+
 
 # Checks if a matrix is a valid rotation matrix.    https://learnopencv.com/rotation-matrix-to-euler-angles/
 def isRotationMatrix(R) :
@@ -38,14 +39,24 @@ def rotationMatrixToEulerAngles(R) :
     return np.array([x, y, z])
 
 emptyserial = -99   #add a burner variable because the arduino doesn't read the first values
+s = sched.scheduler(time.time, time.sleep)
+t_ser_end = dt.datetime.now()
 def sendserial(idTag, x, y, heading):
-    #ser = serial.Serial('/dev/ttyUSB0', 115200, timeout=1) #ttyACM0 USB0 ls /dev/tty*
-    ser = serial.Serial('/dev/ttyACM0', 115200, timeout=1) #ttyACM0 USB0 ls /dev/tty*
+    #ser = serial.Serial('/dev/ttyUSB0', 9600, timeout=1) #ttyACM0 USB0 ls /dev/tty*
+    ser = serial.Serial('/dev/ttyACM0', 9600, timeout=1) #ttyACM0 USB0 ls /dev/tty*
     ser.reset_input_buffer()
-    ser.write(str.encode("%d;%d;%d;%d;%d\n" % (emptyserial ,idTag,x, y, heading)))
-    line = ser.readline().decode('utf-8').rstrip()
-    print(line)
-    time.sleep(1)
+    starttime = time.time()
+    endtime = time.time()
+    while endtime - starttime < 3:
+        ser.write(("%d;%d;%d;%d;%d\n" % (emptyserial ,idTag,x, y, heading)).encode('utf-8'))
+        #ser.write("Hello from Raspberry Pi!\n".encode('utf-8'))
+        line = ser.readline().decode('utf-8').rstrip()
+        print(line)
+        time.sleep(1)
+        endtime = time.time()
+
+    
+
 
 with open('camera_cal.npy', 'rb') as f:
     camera_matrix = np.load(f)
@@ -58,38 +69,6 @@ parameters.adaptiveThreshConstant = 10
 parameters.adaptiveThreshWinSizeMax = 15
 parameters.adaptiveThreshWinSizeMin = 5
 parameters.adaptiveThreshWinSizeStep = 2
-# parameters.cornerRefinementMethod = cv2.aruco.CORNER_REFINE_CONTOUR
-# parameters.cornerRefinementWinSize = 5
-# parameters.cornerRefinementMaxIterations = 30
-# parameters.minMarkerPerimeterRate = 0.01
-# parameters.maxMarkerPerimeterRate = 4
-# parameters.polygonalApproxAccuracyRate = 0.05
-# parameters.minCornerDistanceRate = 0.05
-# parameters.minDistanceToBorder = 3
-# parameters.minMarkerDistanceRate = 0.05
-# parameters.cornerRefinementWinSize = 5
-# parameters.cornerRefinementMaxIterations = 30
-# parameters.cornerRefinementMinAccuracy = 0.1
-# parameters.markerBorderBits = 1
-# parameters.perspectiveRemovePixelPerCell = 8
-# parameters.perspectiveRemoveIgnoredMarginPerCell = 0.13
-# parameters.maxErroneousBitsInBorderRate = 0.04
-# parameters.minOtsuStdDev = 5.0
-# parameters.errorCorrectionRate = 0.6
-# #parameters.doCornerRefinement = True
-# parameters.aprilTagQuadDecimate = 0.5
-# parameters.aprilTagQuadSigma = 0.8
-# parameters.aprilTagMinClusterPixels = 100
-# parameters.aprilTagMaxNmaxima = 10
-# parameters.aprilTagCriticalRad = 5
-# parameters.aprilTagMaxLineFitMse = 100
-# parameters.aprilTagMinWhiteBlackDiff = 20
-# #parameters.aprilTagDeglitch = True
-# parameters.aprilTagQuadSigma = 0.8
-# parameters.aprilTagMinClusterPixels = 100
-# parameters.aprilTagMaxNmaxima = 10
-# parameters.aprilTagCriticalRad = 5
-# parameters.aprilTagMaxLineFitMse = 100
 
 
 cap = cv2.VideoCapture(0)
@@ -145,14 +124,12 @@ while True:
         #realworld_tvec[0] : x coördinaat
         #realworld_tvec[1] : y coördinaat
 
-        # to do: distance calibration
-        # to do: angle calibration
 
         distance = math.sqrt(realworld_tvec[0]**2 + realworld_tvec[1]**2) #te testen
         angle = math.degrees(math.atan2(realworld_tvec[0], realworld_tvec[1]))    #te testen
 
-        #sample is to the right of the robot -> y is negative
-        #sample is to the left of the robot -> y is positive
+        #sample is to the right of the robot -> y is positive
+        #sample is to the left of the robot -> y is negative
 
         if math.degrees(yaw) > 0.0 and math.degrees(yaw) < 90.0:
             send_x = realworld_tvec[1]
@@ -172,13 +149,13 @@ while True:
             send_heading = math.degrees(yaw) 
     
 
-        tvec_str = "id=%s x=%4.0f  y=%4.0f  dir=%4.0f"%(ids, send_x, send_y, send_heading)
+        tvec_str = "id=%s x=%4.0f  y=%4.0f  dir=%4.0f"%(ids, send_x, send_y, delta_totaltime.seconds)
         cv2.putText(frame, tvec_str, (20, 460), cv2.FONT_HERSHEY_TRIPLEX, 0.7, (0, 0, 255), 2)
         
         # If two seconds pass, send coordinates
         delta = dt.datetime.now()-t
         if delta.seconds >= 1.5:
-            sendserial(ids, send_x, send_y, math.degrees(yaw))
+            sendserial(ids, send_x, send_y, send_heading)
             #print(tvec_str)
             t = dt.datetime.now()
 
