@@ -48,9 +48,11 @@ def sendserial(idTag, x, y, heading):
     starttime = time.time()
     endtime = time.time()
     while endtime - starttime < 3:
+        #idTag = 0
         ser.write(("%d;%d;%d;%d;%d\n" % (emptyserial ,idTag,x, y, heading)).encode('utf-8'))
         #ser.write("Hello from Raspberry Pi!\n".encode('utf-8'))
-        line = ser.readline().decode('utf-8').rstrip()
+        line = ser.readline().decode('utf-8', errors='ignore').rstrip()
+        #str = unicode(str, errors='replace')
         print(line)
         time.sleep(1)
         endtime = time.time()
@@ -64,11 +66,16 @@ with open('camera_cal.npy', 'rb') as f:
 
 aruco_dict = cv2.aruco.Dictionary_get(cv2.aruco.DICT_4X4_250)
 
+#change threshold to adjust the detection
 parameters =  cv2.aruco.DetectorParameters_create()
 parameters.adaptiveThreshConstant = 10
 parameters.adaptiveThreshWinSizeMax = 15
 parameters.adaptiveThreshWinSizeMin = 5
 parameters.adaptiveThreshWinSizeStep = 2
+parameters.cornerRefinementMethod = cv2.aruco.CORNER_REFINE_CONTOUR
+parameters.cornerRefinementWinSize = 5
+parameters.cornerRefinementMaxIterations = 30
+parameters.errorCorrectionRate = 0.6
 
 
 cap = cv2.VideoCapture(0)
@@ -91,7 +98,6 @@ while True:
 
     ret, frame = cap.read()
     frame = cv2.rotate(frame, cv2.ROTATE_180)
-    #change threshold to adjust the detection
     gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
     
     #apply parameters on aruco detectMarkers
@@ -99,14 +105,15 @@ while True:
     
     # if total time delta is bigger than 84, send data to arduino
     delta_totaltime = dt.datetime.now()-t_totaltime
-    if delta_totaltime.seconds >= 84:
-        sendserial(-1, 5, 5, math.degrees(0))
-        ids = None
+    #if delta_totaltime.seconds >= 84:
+        #sendserial(-1, 5, 5, math.degrees(0))
+        #ids = None
         #print(tvec_str)
 
     if ids is not None:
         cv2.aruco.drawDetectedMarkers(frame, corners)
-
+        """
+        #V2:
         rvec_list_all, tvec_list_all, _objPoints = cv2.aruco.estimatePoseSingleMarkers(corners, marker_size, camera_matrix, camera_distortion)
 
         rvec = rvec_list_all[0][0]
@@ -130,7 +137,7 @@ while True:
 
         #sample is to the right of the robot -> y is positive
         #sample is to the left of the robot -> y is negative
-
+        
         if math.degrees(yaw) > 0.0 and math.degrees(yaw) < 90.0:
             send_x = realworld_tvec[1]
             send_y = -realworld_tvec[0] 
@@ -148,14 +155,31 @@ while True:
             send_y = realworld_tvec[0] 
             send_heading = math.degrees(yaw) 
     
-
-        tvec_str = "id=%s x=%4.0f  y=%4.0f  dir=%4.0f"%(ids, send_x, send_y, delta_totaltime.seconds)
+        print(send_x, send_y)
+        tvec_str = "id=%s x=%4.0f  y=%4.0f  dir=%4.0f"%(ids, rvec[0], tvec[0], delta_totaltime.seconds)
         cv2.putText(frame, tvec_str, (20, 460), cv2.FONT_HERSHEY_TRIPLEX, 0.7, (0, 0, 255), 2)
-        
+        """
+        cameravisionX = 29
+        cameravisionY = 38
+        for i in range(len(ids)):
+            # get the center point of the tag
+                center = corners[i][0]
+                M = cv2.moments(center)
+                cY = int((M["m10"] / M["m00"]) / 10)
+                cX = int((M["m01"] / M["m00"]) / 10)
+                cY = cY * cameravisionY/60
+                cY = int(cY) - int(cameravisionY/2)
+                cX = cX * cameravisionX/42 
+                cX = int(cX) - 10
+                # writes the coordinates of the center of the tag
+                cv2.putText(frame,"x:"+ str(cX) + ", y:" + str(cY), (20, 460), cv2.FONT_HERSHEY_TRIPLEX, 0.7,
+                            (0, 255, 0), 2)
+
+
         # If two seconds pass, send coordinates
         delta = dt.datetime.now()-t
         if delta.seconds >= 1.5:
-            sendserial(ids, send_x, send_y, send_heading)
+            #sendserial(ids, send_x, send_y, send_heading)
             #print(tvec_str)
             t = dt.datetime.now()
 
