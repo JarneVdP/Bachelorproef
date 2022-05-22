@@ -8,6 +8,11 @@ import datetime as dt
 t = dt.datetime.now()
 t_totaltime = dt.datetime.now()
 
+startMarker = '<'
+endMarker = '>'
+dataStarted = False
+dataBuf = ""
+messageComplete = False
 
 # Checks if a matrix is a valid rotation matrix.    https://learnopencv.com/rotation-matrix-to-euler-angles/
 def isRotationMatrix(R) :
@@ -41,6 +46,9 @@ def rotationMatrixToEulerAngles(R) :
 emptyserial = -99   #add a burner variable because the arduino doesn't read the first values
 s = sched.scheduler(time.time, time.sleep)
 t_ser_end = dt.datetime.now()
+
+
+"""
 def sendserial(idTag, x, y, heading):
     #ser = serial.Serial('/dev/ttyUSB0', 9600, timeout=1) #ttyACM0 USB0 ls /dev/tty*
     ser = serial.Serial('/dev/ttyACM0', 9600, timeout=1) #ttyACM0 USB0 ls /dev/tty*
@@ -48,17 +56,85 @@ def sendserial(idTag, x, y, heading):
     starttime = time.time()
     endtime = time.time()
     while endtime - starttime < 3:
-        #idTag = 0
+        print(endtime - starttime)
         ser.write(("%d;%d;%d;%d;%d\n" % (emptyserial ,idTag,x, y, heading)).encode('utf-8'))
-        #ser.write("Hello from Raspberry Pi!\n".encode('utf-8'))
-        line = ser.readline().decode('utf-8', errors='ignore').rstrip()
-        #str = unicode(str, errors='replace')
+        line = ser.readline().decode('utf-8', errors='replace').rstrip()
         print(line)
-        time.sleep(1)
+        #time.sleep(1)
         endtime = time.time()
+    #return line
+"""
 
+def setupSerial(baudRate, serialPortName):
     
+    global  serialPort
+    
+    serialPort = serial.Serial(port= serialPortName, baudrate = baudRate, timeout=0, rtscts=True)
 
+    print("Serial port " + serialPortName + " opened  Baudrate " + str(baudRate))
+
+    waitForArduino()
+
+
+emptyserial = 99
+def sendToArduino(idTag, x, y, heading):
+    
+        # this adds the start- and end-markers before sending
+    global startMarker, endMarker, serialPort
+    
+    stringWithMarkers = (startMarker)
+    stringWithMarkers += str(emptyserial)
+    stringWithMarkers += ";"
+    stringWithMarkers += str(idTag)
+    stringWithMarkers += ";"
+    stringWithMarkers += str(x)
+    stringWithMarkers += ";"
+    stringWithMarkers += str(y)
+    stringWithMarkers += ";"
+    stringWithMarkers += str(heading)    
+    stringWithMarkers += (endMarker)
+
+    serialPort.write(stringWithMarkers.encode('utf-8')) # encode needed for Python3
+
+def recvLikeArduino():
+
+    global startMarker, endMarker, serialPort, dataStarted, dataBuf, messageComplete
+
+    if serialPort.inWaiting() > 0 and messageComplete == False:
+        x = serialPort.read().decode("utf-8", errors='ignore') # decode needed for Python3
+        
+        if dataStarted == True:
+            if x != endMarker:
+                dataBuf = dataBuf + x
+            else:
+                dataStarted = False
+                messageComplete = True
+        elif x == startMarker:
+            dataBuf = ''
+            dataStarted = True
+    
+    if (messageComplete == True):
+        messageComplete = False
+        return dataBuf
+    else:
+        return "XXX" 
+
+def waitForArduino():
+
+    # wait until the Arduino sends 'Arduino is ready' - allows time for Arduino reset
+    # it also ensures that any bytes left over from a previous message are discarded
+    
+    print("Waiting for Arduino to reset")
+     
+    msg = ""
+    while msg.find("Arduino is ready") == -1:
+        msg = recvLikeArduino()
+        if not (msg == 'XXX'): 
+            print(msg)
+
+
+
+setupSerial(9600, "/dev/ttyACM0")
 
 with open('camera_cal.npy', 'rb') as f:
     camera_matrix = np.load(f)
@@ -105,12 +181,14 @@ while True:
     
     # if total time delta is bigger than 84, send data to arduino
     delta_totaltime = dt.datetime.now()-t_totaltime
-    #if delta_totaltime.seconds >= 84:
-        #sendserial(-1, 5, 5, math.degrees(0))
-        #ids = None
-        #print(tvec_str)
+    if delta_totaltime.seconds >= 84:
+        sendToArduino(-1, 5, 5, math.degrees(0))
+        ids = None
 
     if ids is not None:
+        arduinoReply = recvLikeArduino()
+        if not (arduinoReply == 'XXX'):
+            print (" %s" %(arduinoReply))
         cv2.aruco.drawDetectedMarkers(frame, corners)
         """
         #V2:
@@ -172,15 +250,14 @@ while True:
                 cX = cX * cameravisionX/42 
                 cX = int(cX) - 10
                 # writes the coordinates of the center of the tag
-                cv2.putText(frame,"x:"+ str(cX) + ", y:" + str(cY), (20, 460), cv2.FONT_HERSHEY_TRIPLEX, 0.7,
+                cv2.putText(frame,"x:"+ str(cX) + ", y:" + str(cY) + ", t:" + str(delta_totaltime.seconds), (20, 460), cv2.FONT_HERSHEY_TRIPLEX, 0.7,
                             (0, 255, 0), 2)
 
 
         # If two seconds pass, send coordinates
         delta = dt.datetime.now()-t
-        if delta.seconds >= 1.5:
-            #sendserial(ids, send_x, send_y, send_heading)
-            #print(tvec_str)
+        if delta.seconds >= 1.0:
+            sendToArduino(ids[0][0], cX, cY, send_heading)
             t = dt.datetime.now()
 
     cv2.imshow('frame', frame)
