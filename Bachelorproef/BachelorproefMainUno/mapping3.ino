@@ -61,4 +61,6 @@ void GoTo3(double x, float heading, double x_station, float heading_station) {
       stilstand();
     }
   }
+  statement = 0;
+  stop_statement = 0;
 }

@@ -71,6 +71,8 @@ void draai(int richting, float heading, float heading_station, double x, double 
         previousMillis = currentMillis;
         stilstand();
       }
+      statement = 0;
+      stop_statement = 0;
     }
   }
   else if (richting == 1)
@@ -123,6 +125,8 @@ void draai(int richting, float heading, float heading_station, double x, double 
         previousMillis = currentMillis;
         stilstand();
       }
+      statement = 0;
+      stop_statement = 0;
     }
   }
 }
@@ -185,6 +189,8 @@ void draai2(int richting, float heading, float heading_station, double x, double
         previousMillis = currentMillis;
         stilstand();
       }
+      statement = 0;
+      stop_statement = 0;
     }
   }
   else if (richting == 1)
@@ -247,6 +253,8 @@ void draai2(int richting, float heading, float heading_station, double x, double
         stilstand();
 
       }
+      statement = 0;
+      stop_statement = 0;
     }
   }
 }

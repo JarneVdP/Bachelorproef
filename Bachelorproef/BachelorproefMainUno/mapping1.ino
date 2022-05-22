@@ -62,5 +62,7 @@ void GoTo(double x, float heading, double camera_x, float camera_heading) {
       previousMillis = currentMillis;
       stilstand();
     }
+    statement = 0;
+    stop_statement = 0;
   }
 }
