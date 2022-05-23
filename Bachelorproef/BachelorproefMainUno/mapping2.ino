@@ -49,8 +49,9 @@ void GoTo2(double x, float heading, double x_station, float heading_station) {
     if (currentMillis - previousMillis >= interval) {
       previousMillis = currentMillis;
       stilstand();
-      statement = 0;
     }
+    statement = 0;
+    stop_statement = 0;
   }
   /*
     Serial.println("x");

@@ -135,10 +135,11 @@ void goStation(double x, double y, double x_station, double y_station, float hea
   else if (direction_bott == 1) {
     if (currentMillis - previousMillis >= interval) {
       previousMillis = currentMillis;
-      direction_bot = 0;
-      position_bot = 0;
-      direction_bott = 0;
-      draai_bot = 0;
+      stilstand();
     }
+    direction_bot = 0;
+    position_bot = 0;
+    direction_bott = 0;
+    draai_bot = 0;
   }
 }
