@@ -147,6 +147,7 @@ int emptyserial, id_ard, x_ard, y_ard, heading_ard;
 
 void loop() {
   // odometry(Position); //update positie
+  
   if (loopCounter == 0) {
     //measureStartPos();
     Serial.print("<x distance: ");
@@ -154,10 +155,13 @@ void loop() {
     Serial.print("y distance: ");
     Serial.println(Position.y_pos);
     Serial.println('>');
-  }
+  } 
+  loopCounter = loopCounter + 1;
+  recvWithStartEndMarkers();
+  replyToPython();
+//  /delay(200);
   if (Serial.available() > 0 && state_serial == 0) { //receive data from raspberry pi
-    recvWithStartEndMarkers();
-    replyToPython();
+    
     //if (id_ard != 0) {
     //state_serial = 1;
     //}
@@ -170,7 +174,7 @@ void loop() {
     if (y_ard > 0){ digitalWrite(led3, HIGH);} //8
     if (heading_ard > 0){ digitalWrite(led4, HIGH);} //9
   */
-
+  /*
   if (id_ard == -1) { //mogelijks nog een waarde erbij doen indien id_ard gereset wordt wanneer de camera de sample niet meer ziet
     state_ExcavationSquare = 2;
     state_sample = 2;
@@ -197,11 +201,11 @@ void loop() {
     Serial.println("<All samples in excavation1 place stored. Searching in excavation2/turn square>");
     sample_counter = 1;
   }
-  Serial.print("<state_ExcavationSquare");
+  Serial.print("<state_ExcavationSquare ");
   Serial.println(state_ExcavationSquare);
-  Serial.print("state_sample");
+  Serial.print("state_sample ");
   Serial.println(state_sample);
-  Serial.print("state_station");
+  Serial.print("state_station ");
   Serial.print(state_station);
   Serial.print(">");
   // go to sample state_ExcavationSquare
@@ -325,7 +329,6 @@ void loop() {
     id_ard = 0;
     }
   */
-  loopCounter = loopCounter + 1;
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
