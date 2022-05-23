@@ -5,7 +5,7 @@ float error_h = 2 * (3.14159265359 / 180);
 
 unsigned long previousMillis = 1;
 const long interval = 100;
-double error_x = 4;
+double error_x = 1;
 
 void goStation(double x, double y, double x_station, double y_station, float heading, float heading_station) {
   unsigned long currentMillis = millis();

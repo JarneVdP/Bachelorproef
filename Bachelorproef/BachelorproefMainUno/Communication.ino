@@ -43,8 +43,13 @@ void replyToPython() {
     Serial.print(y_ard);
     Serial.print("  , ");
     //
-    Serial.print(state_serial);
-    Serial.print('>');
+    Serial.print("state_ExcavationSquare ");
+    Serial.println(state_ExcavationSquare);
+    Serial.print("state_sample ");
+    Serial.println(state_sample);
+    Serial.print("state_station ");
+    Serial.print(state_station);
+    Serial.print(">");
     newData = false;
   }
 }

@@ -188,16 +188,6 @@ void loop() {
   replyToPython();
   delay(50);
 
-  /* DEBUG*/
-  /*
-    if (id_ard == 13){ digitalWrite(led1, HIGH);} //6
-    if (x_ard > 0){ digitalWrite(led2, HIGH);} //7x
-    if (y_ard > 0){ digitalWrite(led3, HIGH);} //8
-    if (heading_ard > 0){ digitalWrite(led4, HIGH);} //9
-  */
-
-
-
   if (id_ard == -1) { //mogelijks nog een waarde erbij doen indien id_ard gereset wordt wanneer de camera de sample niet meer ziet
     state_ExcavationSquare = 2;
     state_sample = 2;
@@ -224,6 +214,7 @@ void loop() {
     Serial.println("<All samples in excavation1 place stored. Searching in excavation2/turn square>");
     sample_counter = 1;
   }
+  /*
   Serial.print("<state_ExcavationSquare ");
   Serial.println(state_ExcavationSquare);
   Serial.print("state_sample ");
@@ -231,21 +222,24 @@ void loop() {
   Serial.print("state_station ");
   Serial.print(state_station);
   Serial.print(">");
+  */
   // go to sample state_ExcavationSquare
   if (state_ExcavationSquare  == 0  && state_sample == 0 && state_station == 0) {
-    Serial.println("<go to excavation square>");
+    //Serial.println("<go to excavation square>");
     odometry(Position); //update positie
     // Nog aan te passen dat die eenmaal berekend wordt
     if ( heading_statement == 0) { //hoek bepalen + afstand berekenen
       odometry(Position); //update positie
       heading_doel = heading_station(Position.x_pos,  Position.y_pos,   x_sample[sample_counter],  y_sample[sample_counter]); //berekenen van de hoek tussen huidige positie en station
       heading_statement = 1;
+      /*
       Serial.print("<heading_doel");
       Serial.println(heading_doel);
       Serial.print(">");
+      */
     }
     goStation(Position.x_pos,  Position.y_pos,  x_sample[sample_counter],  y_sample[sample_counter],  Position.heading, heading_doel);
-    if (Position.x_pos > x_sample[sample_counter] - 2 && Position.x_pos < x_sample[sample_counter] + 2) {
+    if (Position.x_pos > x_sample[sample_counter] - 1 && Position.x_pos < x_sample[sample_counter] + 2) {
       state_ExcavationSquare = 1;
       heading_statement = 0;
       
@@ -257,9 +251,11 @@ void loop() {
       stop_statement = 0;
     }
   }
+  replyToPython();
+  delay(50);
   // stand still and check for sample
   if (state_ExcavationSquare  != 0  && state_sample == 0 && state_station == 0) {
-    Serial.println("<stand still and check for sample>");
+    //Serial.println("<stand still and check for sample>");
     odometry(Position); //update positie
 
     if (hoek_state == 0){
@@ -274,10 +270,11 @@ void loop() {
       stop_statement = 0;
       statement = 0;
     }
-    
+    replyToPython();
+    delay(50);
     if (id_ard != 0) {
       //move to sample
-      Serial.println("move to sample");
+      Serial.println("<move to sample>");
       if ( heading_statement == 0) { //hoek bepalen + afstand berekenen
         odometry(Position); //update positie
         heading_doel = heading_station(Position.x_pos,  Position.y_pos,  x_station,  y_stationBlue); //berekenen van de hoek tussen huidige positie en station
