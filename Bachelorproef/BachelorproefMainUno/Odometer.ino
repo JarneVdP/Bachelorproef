@@ -6,11 +6,7 @@
 //   Best Performance: both pins have interrupt capability
 //   Good Performance: only the first pin has interrupt capability
 //   Low Performance:  neither pin has interrupt capability
-/*
-Encoder knobLeft(0, 1); //white/white - pink/green  
-Encoder knobRight(2, 3); //white/white - orange/green
-Encoder knobFront(6, 7); //yellow/white - purple/green
-*/
+
 //Mega
 Encoder knobRight(2, 3); //white/white - pink/green
 Encoder knobLeft(18, 19); //white/white - orange/green
@@ -25,7 +21,6 @@ double newLeft, newRight, newFront, prev_positionLeft, prev_positionRight, prev_
 double delta_positionLeft, delta_positionRight, delta_positionFront;
 float theta, deltatheta = 0;
 double dx, dy;
-//double delta_x, delta_y, x_pos, y_pos;
 
 int forward_offset = 15;//20; //cm
 int trackwidth = 28; //cm, breedte tussen 2 wielen 
@@ -83,13 +78,14 @@ void odometry(PositionStruct &Position) {
 
   //print current position
   if(newLeft != prev_positionLeft || newRight != prev_positionRight || newFront != prev_positionFront){
-    Serial.print("X pos = ");
+    Serial.print("<X pos = ");
     Serial.print(Position.x_pos);
     Serial.print(", Y pos = ");
     Serial.print(Position.y_pos);
     Serial.print(", Heading = ");
     Serial.print(Position.heading); Serial.print("   ");
     Serial.println(Position.heading * 180/ 3.14159265358979);
+    Serial.println('>');
   }
 
   //Old position

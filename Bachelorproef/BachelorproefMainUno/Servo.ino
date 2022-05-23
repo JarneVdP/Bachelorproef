@@ -1,3 +1,4 @@
+/*
 void grabbingSample(){
   //MotorGoUp(10); // bring glider to right vertical position
   //delay(5000);
@@ -65,3 +66,4 @@ void servo(int A,int B, int C){
     loopTime = millis();
     while(millis() - loopTime < 2000){} // bring arm to sample
 }
+*/

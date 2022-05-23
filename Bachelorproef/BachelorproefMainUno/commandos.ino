@@ -1,5 +1,3 @@
-int stop_statement = 0;
-
 float heading_station(double x, double y, double x_station, double y_station) //hoek berekenen
 {
   float hoek = atan((y - y_station) / (x - x_station));
@@ -15,6 +13,10 @@ void draai(int richting, float heading, float heading_station, double x, double 
   unsigned long currentMillis = millis();
   float heading_backstation_0 = (hoek2 + heading_station  );
   float heading_backstation_1 = (-hoek2 + heading_station );
+  Serial.println("heading_backstation_0  ");
+  Serial.println(heading_backstation_0);
+  Serial.println("heading_backstation_1  ");
+  Serial.println(heading_backstation_1);
   if (richting == 0) //rechts
   {
     //Serial.println("statement");
@@ -51,6 +53,7 @@ void draai(int richting, float heading, float heading_station, double x, double 
         if (currentMillis - previousMillis >= interval) {
           previousMillis = currentMillis;
           stilstand();
+          Serial.println("stil_0");
         }
       }
     }
@@ -60,6 +63,7 @@ void draai(int richting, float heading, float heading_station, double x, double 
       if (currentMillis - previousMillis >= interval) {
         previousMillis = currentMillis;
         vooruit();
+        Serial.println("BG3_0");
       }
       if (x <= x_station + error_x )
       {
@@ -70,19 +74,22 @@ void draai(int richting, float heading, float heading_station, double x, double 
       if (currentMillis - previousMillis >= interval) {
         previousMillis = currentMillis;
         stilstand();
+        Serial.println("BG4_0");
       }
-      statement = 0;
-      stop_statement = 0;
     }
   }
   else if (richting == 1)
   {
+    Serial.println("statement_1 ");
+    Serial.println(statement);
     if (heading_station != 0 && statement == 0)// als hoek verschillend is van nul doe deze code
     {
       if (heading >= heading_backstation_1)
       {
+        Serial.println("BG1_1");
         if (currentMillis - previousMillis >= interval)
         {
+          Serial.println("links_1");
           previousMillis = currentMillis;
           eigenasdraaienlinks();
         }
@@ -94,17 +101,20 @@ void draai(int richting, float heading, float heading_station, double x, double 
       {
         if (currentMillis - previousMillis >= interval)
         {
+          Serial.println("links_1");
           previousMillis = currentMillis;
           eigenasdraaienrechts();
         }
         if (heading > heading_backstation_1 - error_h) {
           statement = 1;
         }
+        Serial.println("BG2_1");
       }
       if (statement == 1) {
         if (currentMillis - previousMillis >= interval) {
           previousMillis = currentMillis;
           stilstand();
+          Serial.println("stil_1");
         }
       }
     }
@@ -114,6 +124,7 @@ void draai(int richting, float heading, float heading_station, double x, double 
       if (currentMillis - previousMillis >= interval) {
         previousMillis = currentMillis;
         vooruit();
+        Serial.println("BG3_1");
       }
       if (x <= x_station + error_x )
       {
@@ -124,10 +135,15 @@ void draai(int richting, float heading, float heading_station, double x, double 
       if (currentMillis - previousMillis >= interval) {
         previousMillis = currentMillis;
         stilstand();
+        Serial.println("stil_1");
       }
-      statement = 0;
-      stop_statement = 0;
     }
+    Serial.println("x ");
+    Serial.println(x);
+    Serial.println("x_station ");
+    Serial.println(x_station);
+    Serial.println("stop_statement ");
+    Serial.println(stop_statement);
   }
 }
 
@@ -137,29 +153,36 @@ void draai2(int richting, float heading, float heading_station, double x, double
 
   unsigned long currentMillis = millis();
 
+  
+  
   if (richting == 0) //rechts
   {
     if (heading_station != 0 && statement == 0)// als hoek verschillend is van nul doe deze code
     {
-      if (heading <= hoek3 - heading_station)
+      
+      if (heading <= heading_station)
       {
         if (currentMillis - previousMillis >= interval)
         {
+          
           previousMillis = currentMillis;
           eigenasdraaienrechts();
         }
-        if (heading > hoek3 - heading_station - error_h) {
+        if (heading > heading_station - error_h) {
           statement = 1;
         }
+     
       }
-      else if (heading >= hoek3 - heading_station)
+      else if (heading >= heading_station)
       {
+        
         if (currentMillis - previousMillis >= interval)
         {
+          
           previousMillis = currentMillis;
           eigenasdraaienlinks();
         }
-        if (heading < hoek3 - heading_station + error_h ) {
+        if (heading < heading_station + error_h ) {
           statement = 1;
         }
       }
@@ -167,44 +190,31 @@ void draai2(int richting, float heading, float heading_station, double x, double
         if (currentMillis - previousMillis >= interval) {
           previousMillis = currentMillis;
           stilstand();
-
         }
-      }
-    }
-
-    //x richting
-
-    else if ( x < x_station - error_x  ) {
-      if (currentMillis - previousMillis >= interval) {
-        previousMillis = currentMillis;
-        vooruit();
-      }
-      if (x >= x_station - error_x )
-      {
         stop_statement = 1;
       }
     }
-    else if (stop_statement == 1) {
+
+   if (stop_statement == 1) {
       if (currentMillis - previousMillis >= interval) {
         previousMillis = currentMillis;
         stilstand();
       }
-      statement = 0;
-      stop_statement = 0;
     }
   }
   else if (richting == 1)
   {
+
+    Serial.println(statement);
     if (heading_station != 0 && statement == 0)// als hoek verschillend is van nul doe deze code
     {
-      /*
       Serial.println("heading");
       Serial.println(heading);
       Serial.println("heading_station");
       Serial.println(heading_station);
-      */
       if (heading >= heading_station)
       {
+        Serial.println("LINKS");
         if (currentMillis - previousMillis >= interval)
         {
 
@@ -217,6 +227,7 @@ void draai2(int richting, float heading, float heading_station, double x, double
       }
       else if (heading <= heading_station)
       {
+        Serial.println("RECHTS");
         if (currentMillis - previousMillis >= interval)
         {
 
@@ -232,6 +243,7 @@ void draai2(int richting, float heading, float heading_station, double x, double
         if (currentMillis - previousMillis >= interval) {
           previousMillis = currentMillis;
           stilstand();
+          Serial.println("stillll");
         }
       }
     }
@@ -241,6 +253,7 @@ void draai2(int richting, float heading, float heading_station, double x, double
       if (currentMillis - previousMillis >= interval) {
         previousMillis = currentMillis;
         vooruit();
+        Serial.println("voorrr");
       }
       if (x >= x_station - error_x )
       {
@@ -253,8 +266,6 @@ void draai2(int richting, float heading, float heading_station, double x, double
         stilstand();
 
       }
-      statement = 0;
-      stop_statement = 0;
     }
   }
 }

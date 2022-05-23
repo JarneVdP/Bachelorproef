@@ -7,11 +7,6 @@ unsigned long previousMillis = 1;
 const long interval = 100;
 double error_x = 4;
 
-int direction_bot = 0;
-int position_bot = 0;
-int direction_bott = 0;
-int draai_bot = 0;
-
 void goStation(double x, double y, double x_station, double y_station, float heading, float heading_station) {
   unsigned long currentMillis = millis();
   if (( heading <= hoek && heading >= (hoek * -1)) && direction_bot == 0){
@@ -137,9 +132,5 @@ void goStation(double x, double y, double x_station, double y_station, float hea
       previousMillis = currentMillis;
       stilstand();
     }
-    direction_bot = 0;
-    position_bot = 0;
-    direction_bott = 0;
-    draai_bot = 0;
   }
 }
