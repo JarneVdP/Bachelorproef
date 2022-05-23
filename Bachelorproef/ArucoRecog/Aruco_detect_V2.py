@@ -134,7 +134,7 @@ def waitForArduino():
 
 
 
-setupSerial(9600, "/dev/ttyACM0")
+setupSerial(9600, "/dev/ttyACM0") #ttyUSB0   ttyACM0
 
 with open('camera_cal.npy', 'rb') as f:
     camera_matrix = np.load(f)
@@ -185,6 +185,9 @@ while True:
         sendToArduino(-1, 5, 5, math.degrees(0))
         ids = None
 
+    arduinoReply = recvLikeArduino()
+    if not (arduinoReply == 'XXX'):
+        print (" %s" %(arduinoReply))
     if ids is not None:
         arduinoReply = recvLikeArduino()
         if not (arduinoReply == 'XXX'):
@@ -246,7 +249,7 @@ while True:
                 cY = int((M["m10"] / M["m00"]) / 10)
                 cX = int((M["m01"] / M["m00"]) / 10)
                 cY = cY * cameravisionY/60
-                cY = int(cY) - int(cameravisionY/2)
+                cY = -1 * (int(cY) - int(cameravisionY/2))
                 cX = cX * cameravisionX/42 
                 cX = int(cX) - 10
                 # writes the coordinates of the center of the tag
