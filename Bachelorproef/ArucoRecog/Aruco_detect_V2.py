@@ -134,7 +134,7 @@ def waitForArduino():
 
 
 
-setupSerial(9600, "/dev/ttyACM0") #ttyUSB0   ttyACM0
+setupSerial(115200, "/dev/ttyUSB0") #ttyUSB0   ttyACM0
 
 with open('camera_cal.npy', 'rb') as f:
     camera_matrix = np.load(f)
@@ -240,18 +240,19 @@ while True:
         tvec_str = "id=%s x=%4.0f  y=%4.0f  dir=%4.0f"%(ids, rvec[0], tvec[0], delta_totaltime.seconds)
         cv2.putText(frame, tvec_str, (20, 460), cv2.FONT_HERSHEY_TRIPLEX, 0.7, (0, 0, 255), 2)
         """
-        cameravisionX = 29
-        cameravisionY = 38
+        cameravisionX = 25
+        cameravisionY = 37
         for i in range(len(ids)):
             # get the center point of the tag
                 center = corners[i][0]
                 M = cv2.moments(center)
-                cY = int((M["m10"] / M["m00"]) / 10)
+                cY = int((M["m10"] / M["m00"]) / 10) 
                 cX = int((M["m01"] / M["m00"]) / 10)
+                #calibrate to real world
                 cY = cY * cameravisionY/60
-                cY = -1 * (int(cY) - int(cameravisionY/2))
-                cX = cX * cameravisionX/42 
-                cX = int(cX) - 10
+                cY = int(cY) - int(cameravisionY/2)   #center is 0
+                cX = cX * cameravisionX/43 
+                cX = int(cX) - 6
                 # writes the coordinates of the center of the tag
                 cv2.putText(frame,"x:"+ str(cX) + ", y:" + str(cY) + ", t:" + str(delta_totaltime.seconds), (20, 460), cv2.FONT_HERSHEY_TRIPLEX, 0.7,
                             (0, 255, 0), 2)
