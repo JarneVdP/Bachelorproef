@@ -3,7 +3,7 @@ void standaardPosArm(){
 }
 
 void grabbingSample(double D, double E, double F){ // oproepen indien (x,y) coord rond (-3,-3) (marge van paar cm) liggen voor gewone samples
-  ArduinoSlave.print(String(D) + "&" + String(E) + "&" + String(F) + "&" + String(D) + "&" + String(70) + "&" + String(F) + "&" + String("90") + "&" + String("90") + "&" + String(0) + "&" + "#" + "&" + "#" + "&" + "#" + "&" + "1"); //volledige sequentie}
+  ArduinoSlave.print(String(D) + "&" + String(E) + "&" + String(F) + "&" + String(D) + "&" + String(70) + "&" + String(F) + "&" + String("90") + "&" + String("70") + "&" + String(0) + "&" + "#" + "&" + "#" + "&" + "#" + "&" + "1"); //volledige sequentie}
 }
 void grabbingSample17(double G, double H, double I){ // oproepen indien (x,y) coord rond (-3,-3) (marge van paar cm) liggen voor speciale sample
   ArduinoSlave.print(String(G) + "&" + String(H) + "&" + String(I) + "&" + String(G) + "&" + String(70) + "&" + String(I) + "&" + String(-45) + "&" + String(-35) + "&" + String(130) + "&" + String(90) + "&" + String(90) + "&" + String(0) + "&" + "1"); //servo(D,E,F); --> servo's laten bewegen op basis van (x,y)-coordinaten van camera indien de (x,y) coord rond (0,0) liggen;
