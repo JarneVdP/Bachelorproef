@@ -88,10 +88,10 @@ int heading_sample[] = {0, 0};
 int sample_counter = 0; // bepalen of samples palced >=3
 
 //waardes voor station
-double x_station = 5 ;
+double x_station = 20 ;
 double y_stationRed = 33;
-double y_stationBlue = 100;
-double y_stationGreen = 166;
+double y_stationBlue = 166;
+double y_stationGreen = 100;
 
 //Master communication and servo
 const int rxPin = 50;
@@ -276,6 +276,7 @@ void loop() {
       //move to sample
       Serial.println("<move to sample>");
       if ( heading_statement == 0) { //hoek bepalen + afstand berekenen
+        stilstand();
         odometry(Position); //update positie
         heading_doel = heading_station(Position.x_pos,  Position.y_pos,  x_station,  y_stationBlue); //berekenen van de hoek tussen huidige positie en station
         heading_statement = 1;
@@ -287,14 +288,14 @@ void loop() {
     }
 
     //grab sample
-    if (Position.x_pos > x_ard - 5 && Position.x_pos < x_ard + 5) {  // && Position.y_pos > y_ard - 5 && Position.y_pos < y_ard + 5){
+    if (Position.x_pos > x_ard - 2 && Position.x_pos < x_ard + 2){  // && Position.y_pos > y_ard - 5 && Position.y_pos < y_ard + 5){
       odometry(Position); //update positie
-      Serial.println("grab sample");
+      Serial.println("<grab sample>");
       stilstand();
       if (id_ard == 17) { //misschien naar while veranderen maar dan gaat serial comm niet worden uitgevoerd. of aanpassen en in de loop expliciet communicateie oproepen
         odometry(Position); //update positie
         delay(1000); grabbingSample17(-26.565, -38.612, -54.754); delay(1000);
-        delay(1000); state_serial = 0; delay(1000); // check for new id
+        state_serial = 0; // check for new id
       }
       else {
         grabbingSample(-26.565, -38.612, -54.754);
@@ -303,12 +304,19 @@ void loop() {
       odometry(Position); //update positie
       state_sample = 1;
       heading_statement = 0;
+      
+      statement = 0;
+      direction_bot = 0;
+      position_bot = 0;
+      direction_bott = 0;
+      draai_bot = 0;
+      stop_statement = 0;
     }
   }
 
   //depending on ard_id, go to blue station
   if (id_ard == 13 && state_ExcavationSquare != 0  && state_sample == 1 && state_station == 0) { //blue
-    Serial.println("to blue station");
+    Serial.println("<to blue station>");
     odometry(Position); //update positie
     if ( heading_statement == 0) { //hoek bepalen
       odometry(Position); //update positie
@@ -316,14 +324,14 @@ void loop() {
       heading_statement = 1;
     }
     goStation(Position.x_pos, Position.y_pos, x_station, y_stationBlue, Position.heading, heading_doel);
-    if (Position.x_pos < x_station - 5 && Position.x_pos < x_station + 5) {
+    if (Position.x_pos < x_station - 2 && Position.x_pos < x_station + 2) {
       state_station = 1;
       odometry(Position); //update positie
     }
   }
   //depending on ard_id, go to red station
   if (id_ard == 47 && state_ExcavationSquare  != 0  && state_sample == 1 && state_station == 0) { //red
-    Serial.println("to red station");
+    Serial.println("<to red station>");
     if ( heading_statement == 0) { //hoek bepalen
       odometry(Position); //update positie
       heading_doel = heading_station(Position.x_pos,  Position.y_pos,  x_station,  y_stationRed); //berekenen van de hoek tussen huidige positie en station
@@ -331,14 +339,14 @@ void loop() {
     }
     odometry(Position); //update positie
     goStation(Position.x_pos, Position.y_pos, x_station, y_stationRed, Position.heading, heading_doel);
-    if (Position.x_pos > x_station - 5 && Position.x_pos < x_station + 5 && Position.y_pos > y_stationRed - 5 && Position.y_pos < y_stationRed + 5) {
+    if (Position.x_pos > x_station - 5 && Position.x_pos < x_station + 2){      // && Position.y_pos > y_stationRed - 5 && Position.y_pos < y_stationRed + 5) {
       odometry(Position); //update positie
       state_station = 1;
     }
   }
   //depending on ard_id, go to green station
   if (id_ard == 36 && state_ExcavationSquare  != 0 && state_sample == 1 && state_station == 0) { //green
-    Serial.println("to green station");
+    Serial.println("<to green station>");
     odometry(Position); //update positie
     if ( heading_statement == 0) { //hoek bepalen
       odometry(Position); //update positie
@@ -346,7 +354,7 @@ void loop() {
       heading_statement = 1;
     }
     goStation(Position.x_pos, Position.y_pos, x_station, y_stationGreen, Position.heading, heading_doel);
-    if (Position.x_pos > x_station - 5 && Position.x_pos < x_station + 5 && Position.y_pos > y_stationGreen - 5 && Position.y_pos < y_stationGreen + 5) {
+    if (Position.x_pos > x_station - 2 && Position.x_pos < x_station + 2 ){ // && Position.y_pos > y_stationGreen - 5 && Position.y_pos < y_stationGreen + 5) {
       state_station = 1;
       odometry(Position); //update positie
     }
@@ -354,8 +362,12 @@ void loop() {
   //drop sample
   if (state_ExcavationSquare  == 1 && state_sample == 1 && state_station == 1) {
     odometry(Position); //update positie
-    Serial.println("drop sample");
+    Serial.println("<drop sample>");
     stilstand();
+    delay(1000);
+    placeDownSample();
+    delay(1000);
+    /*
     if (sample_counter == 0) {
       delay(1000);
       placeDownSample();
@@ -366,6 +378,7 @@ void loop() {
       placeDownSample180();
       delay(1000);
     }
+    */
     odometry(Position); //update positie
     state_sample = 0;
     state_station = 0;
@@ -373,13 +386,12 @@ void loop() {
     samples_place[sample_counter]++;
     heading_statement = 0;
     id_ard = 0;
+
+    statement = 0;
+    direction_bot = 0;
+    position_bot = 0;
+    direction_bott = 0;
+    draai_bot = 0;
+    stop_statement = 0;
   }
-
 }
-
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//goStation( Position.x_pos,  Position.y_pos,  x_station,  y_stationGreen,  Position.heading, heading_doel ); //naar station rijden
-//mapp( Position.x_pos,  Position.heading,  camera_y,  camera_heading); //naar sample rijden vanaf huidige positie
-//mapp , mapping1 wordt (denk ik) nieet meer gebruikt
-
-//watch out for grabbingsample17
