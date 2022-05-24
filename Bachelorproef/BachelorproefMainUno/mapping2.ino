@@ -1,12 +1,9 @@
 void GoTo2(double x, float heading, double x_station, float heading_station) {
-  Serial.println(" aan het draaien");
-  Serial.print(statement);
   unsigned long currentMillis = millis();
   //doel_x= camera_x + x;
   //hoek
   if ( statement == 0)// als hoek verschillend is van nul doe deze code
   {
-    Serial.println("in de functie");
     if (heading >= heading_station)
     {
       if (currentMillis - previousMillis >= interval)
@@ -33,7 +30,6 @@ void GoTo2(double x, float heading, double x_station, float heading_station) {
       if (currentMillis - previousMillis >= interval) {
         previousMillis = currentMillis;
         stilstand();
-        statement = 0;
       }
     }
   }
@@ -50,8 +46,6 @@ void GoTo2(double x, float heading, double x_station, float heading_station) {
       previousMillis = currentMillis;
       stilstand();
     }
-    statement = 0;
-    stop_statement = 0;
   }
   /*
     Serial.println("x");

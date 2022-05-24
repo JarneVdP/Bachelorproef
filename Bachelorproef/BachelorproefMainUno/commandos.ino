@@ -1,5 +1,3 @@
-int stop_statement = 0;
-
 float heading_station(double x, double y, double x_station, double y_station) //hoek berekenen
 {
   float hoek = atan((y - y_station) / (x - x_station));
@@ -71,8 +69,6 @@ void draai(int richting, float heading, float heading_station, double x, double 
         previousMillis = currentMillis;
         stilstand();
       }
-      statement = 0;
-      stop_statement = 0;
     }
   }
   else if (richting == 1)
@@ -125,8 +121,6 @@ void draai(int richting, float heading, float heading_station, double x, double 
         previousMillis = currentMillis;
         stilstand();
       }
-      statement = 0;
-      stop_statement = 0;
     }
   }
 }
@@ -137,29 +131,36 @@ void draai2(int richting, float heading, float heading_station, double x, double
 
   unsigned long currentMillis = millis();
 
+  
+  
   if (richting == 0) //rechts
   {
     if (heading_station != 0 && statement == 0)// als hoek verschillend is van nul doe deze code
     {
-      if (heading <= hoek3 - heading_station)
+      
+      if (heading <= heading_station)
       {
         if (currentMillis - previousMillis >= interval)
         {
+          
           previousMillis = currentMillis;
           eigenasdraaienrechts();
         }
-        if (heading > hoek3 - heading_station - error_h) {
+        if (heading > heading_station - error_h) {
           statement = 1;
         }
+     
       }
-      else if (heading >= hoek3 - heading_station)
+      else if (heading >= heading_station)
       {
+        
         if (currentMillis - previousMillis >= interval)
         {
+          
           previousMillis = currentMillis;
           eigenasdraaienlinks();
         }
-        if (heading < hoek3 - heading_station + error_h ) {
+        if (heading < heading_station + error_h ) {
           statement = 1;
         }
       }
@@ -167,42 +168,26 @@ void draai2(int richting, float heading, float heading_station, double x, double
         if (currentMillis - previousMillis >= interval) {
           previousMillis = currentMillis;
           stilstand();
-
         }
-      }
-    }
-
-    //x richting
-
-    else if ( x < x_station - error_x  ) {
-      if (currentMillis - previousMillis >= interval) {
-        previousMillis = currentMillis;
-        vooruit();
-      }
-      if (x >= x_station - error_x )
-      {
         stop_statement = 1;
       }
     }
-    else if (stop_statement == 1) {
+
+   if (stop_statement == 1) {
       if (currentMillis - previousMillis >= interval) {
         previousMillis = currentMillis;
         stilstand();
       }
-      statement = 0;
-      stop_statement = 0;
     }
   }
   else if (richting == 1)
   {
     if (heading_station != 0 && statement == 0)// als hoek verschillend is van nul doe deze code
-    {
-      /*
-      Serial.println("heading");
+    {/*
+      Serial.println("<heading");
       Serial.println(heading);
       Serial.println("heading_station");
-      Serial.println(heading_station);
-      */
+      Serial.println(heading_station); */
       if (heading >= heading_station)
       {
         if (currentMillis - previousMillis >= interval)
@@ -253,8 +238,6 @@ void draai2(int richting, float heading, float heading_station, double x, double
         stilstand();
 
       }
-      statement = 0;
-      stop_statement = 0;
     }
   }
 }
