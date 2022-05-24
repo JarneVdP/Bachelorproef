@@ -183,11 +183,11 @@ while True:
     delta_totaltime = dt.datetime.now()-t_totaltime
     if delta_totaltime.seconds >= 84:
         sendToArduino(-1, 5, 5, math.degrees(0))
-        ids = None
+        #ids = None
 
-    arduinoReply = recvLikeArduino()
-    if not (arduinoReply == 'XXX'):
-        print (" %s" %(arduinoReply))
+    #arduinoReply = recvLikeArduino()
+    #if not (arduinoReply == 'XXX'):
+        #print (" %s" %(arduinoReply))
     if ids is not None:
         arduinoReply = recvLikeArduino()
         if not (arduinoReply == 'XXX'):
@@ -250,19 +250,22 @@ while True:
                 cX = int((M["m01"] / M["m00"]) / 10)
                 #calibrate to real world
                 cY = cY * cameravisionY/60
-                cY = int(cY) - int(cameravisionY/2)   #center is 0
+                cY = int(cY - cameravisionY/2) - 1#center is 0
                 cX = cX * cameravisionX/43 
                 cX = int(cX) - 6
                 # writes the coordinates of the center of the tag
                 cv2.putText(frame,"x:"+ str(cX) + ", y:" + str(cY) + ", t:" + str(delta_totaltime.seconds), (20, 460), cv2.FONT_HERSHEY_TRIPLEX, 0.7,
-                            (0, 255, 0), 2)
+                            (0, 255, 255), 2)
 
 
         # If two seconds pass, send coordinates
         delta = dt.datetime.now()-t
-        if delta.seconds >= 1.0:
+        if arduinoReply == 'turn':
             sendToArduino(ids[0][0], cX, cY, send_heading)
-            t = dt.datetime.now()
+        #if delta.seconds >= 1.0:
+        #    sendToArduino(ids[0][0], cX, cY, send_heading)
+        #    print(ids[0][0], cX, cY, send_heading)
+        #    t = dt.datetime.now()
 
     cv2.imshow('frame', frame)
     
