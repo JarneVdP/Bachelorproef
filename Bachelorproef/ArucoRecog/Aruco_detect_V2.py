@@ -181,8 +181,8 @@ while True:
     
     # if total time delta is bigger than 84, send data to arduino
     delta_totaltime = dt.datetime.now()-t_totaltime
-    if delta_totaltime.seconds >= 84:
-        sendToArduino(-1, 5, 5, math.degrees(0))
+    #if delta_totaltime.seconds >= 84:
+        #sendToArduino(-1, 5, 5, math.degrees(0))
         #ids = None
 
     #arduinoReply = recvLikeArduino()
@@ -250,7 +250,7 @@ while True:
                 cX = int((M["m01"] / M["m00"]) / 10)
                 #calibrate to real world
                 cY = cY * cameravisionY/60
-                cY = int(cY - cameravisionY/2) - 1#center is 0
+                cY = int(cY - cameravisionY/2)  #center is 0
                 cX = cX * cameravisionX/43 
                 cX = int(cX) - 6
                 # writes the coordinates of the center of the tag
@@ -260,8 +260,9 @@ while True:
 
         # If two seconds pass, send coordinates
         delta = dt.datetime.now()-t
-        if arduinoReply == 'turn':
+        if arduinoReply == 'turn' and delta.seconds >= 2:
             sendToArduino(ids[0][0], cX, cY, send_heading)
+            t = dt.datetime.now()
         #if delta.seconds >= 1.0:
         #    sendToArduino(ids[0][0], cX, cY, send_heading)
         #    print(ids[0][0], cX, cY, send_heading)
