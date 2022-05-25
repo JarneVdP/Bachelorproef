@@ -14,6 +14,7 @@ dataStarted = False
 dataBuf = ""
 messageComplete = False
 
+
 # Checks if a matrix is a valid rotation matrix.    https://learnopencv.com/rotation-matrix-to-euler-angles/
 def isRotationMatrix(R) :
     Rt = np.transpose(R)
@@ -22,10 +23,8 @@ def isRotationMatrix(R) :
     n = np.linalg.norm(I - shouldBeIdentity)
     return n < 1e-6
 
-# Calculates rotation matrix to euler angles
-# of the euler angles ( x and z are swapped ).
-def rotationMatrixToEulerAngles(R) :
 
+def rotationMatrixToEulerAngles(R) :
     assert(isRotationMatrix(R))
 
     sy = math.sqrt(R[0,0] * R[0,0] +  R[1,0] * R[1,0])
@@ -43,27 +42,6 @@ def rotationMatrixToEulerAngles(R) :
 
     return np.array([x, y, z])
 
-emptyserial = -99   #add a burner variable because the arduino doesn't read the first values
-s = sched.scheduler(time.time, time.sleep)
-t_ser_end = dt.datetime.now()
-
-
-"""
-def sendserial(idTag, x, y, heading):
-    #ser = serial.Serial('/dev/ttyUSB0', 9600, timeout=1) #ttyACM0 USB0 ls /dev/tty*
-    ser = serial.Serial('/dev/ttyACM0', 9600, timeout=1) #ttyACM0 USB0 ls /dev/tty*
-    ser.reset_input_buffer()
-    starttime = time.time()
-    endtime = time.time()
-    while endtime - starttime < 3:
-        print(endtime - starttime)
-        ser.write(("%d;%d;%d;%d;%d\n" % (emptyserial ,idTag,x, y, heading)).encode('utf-8'))
-        line = ser.readline().decode('utf-8', errors='replace').rstrip()
-        print(line)
-        #time.sleep(1)
-        endtime = time.time()
-    #return line
-"""
 
 def setupSerial(baudRate, serialPortName):
     
@@ -117,25 +95,23 @@ def recvLikeArduino():
         messageComplete = False
         return dataBuf
     else:
-        return "XXX" 
+        return "BadMessage" 
 
 def waitForArduino():
-
     # wait until the Arduino sends 'Arduino is ready' - allows time for Arduino reset
-    # it also ensures that any bytes left over from a previous message are discarded
-    
+    # Serial.println(<Arduino is ready'>);
     print("Waiting for Arduino to reset")
-     
     msg = ""
     while msg.find("Arduino is ready") == -1:
         msg = recvLikeArduino()
-        if not (msg == 'XXX'): 
+        if not (msg == 'BadMessage'): 
             print(msg)
 
 
-
+# start connection to arduino mega
 setupSerial(115200, "/dev/ttyUSB0") #ttyUSB0   ttyACM0
 
+#implement the matrix and distortion coefficients
 with open('camera_cal.npy', 'rb') as f:
     camera_matrix = np.load(f)
     camera_distortion = np.load(f)
@@ -153,14 +129,13 @@ parameters.cornerRefinementWinSize = 5
 parameters.cornerRefinementMaxIterations = 30
 parameters.errorCorrectionRate = 0.6
 
-
+#get the videostream
 cap = cv2.VideoCapture(0)
 
-marker_size = 5        
+marker_size = 5   #cm      
 camera_width = 640
 camera_height = 480
 camera_frame_rate = 40
-
 
 cap.set(2, camera_width)
 cap.set(4, camera_height)
@@ -181,18 +156,20 @@ while True:
     
     # if total time delta is bigger than 84, send data to arduino
     delta_totaltime = dt.datetime.now()-t_totaltime
-    #if delta_totaltime.seconds >= 84:
-        #sendToArduino(-1, 5, 5, math.degrees(0))
-        #ids = None
+    if delta_totaltime.seconds >= 84:
+        sendToArduino(-1, 5, 5, math.degrees(0))
+        ids = None
 
-    #arduinoReply = recvLikeArduino()
-    #if not (arduinoReply == 'XXX'):
-        #print (" %s" %(arduinoReply))
+    arduinoReply = recvLikeArduino()
+    if not (arduinoReply == 'BadMessage'):
+        print (" %s" %(arduinoReply))
     if ids is not None:
         arduinoReply = recvLikeArduino()
-        if not (arduinoReply == 'XXX'):
+        if not (arduinoReply == 'BadMessage'):
             print (" %s" %(arduinoReply))
         cv2.aruco.drawDetectedMarkers(frame, corners)
+        
+        
         """
         #V2:
         rvec_list_all, tvec_list_all, _objPoints = cv2.aruco.estimatePoseSingleMarkers(corners, marker_size, camera_matrix, camera_distortion)
@@ -240,6 +217,7 @@ while True:
         tvec_str = "id=%s x=%4.0f  y=%4.0f  dir=%4.0f"%(ids, rvec[0], tvec[0], delta_totaltime.seconds)
         cv2.putText(frame, tvec_str, (20, 460), cv2.FONT_HERSHEY_TRIPLEX, 0.7, (0, 0, 255), 2)
         """
+        #V1:
         cameravisionX = 25
         cameravisionY = 37
         for i in range(len(ids)):
@@ -258,19 +236,16 @@ while True:
                             (0, 255, 255), 2)
 
 
-        # If two seconds pass, send coordinates
+        # If the arduino asks for data, send it after two seconds. This makes sure that the robot is standing still (I think :))
         delta = dt.datetime.now()-t
         if arduinoReply == 'turn' and delta.seconds >= 2:
             sendToArduino(ids[0][0], cX, cY, send_heading)
             t = dt.datetime.now()
-        #if delta.seconds >= 1.0:
-        #    sendToArduino(ids[0][0], cX, cY, send_heading)
-        #    print(ids[0][0], cX, cY, send_heading)
-        #    t = dt.datetime.now()
 
+    #show the video output with tags detected
     cv2.imshow('frame', frame)
-    
 
+    #if q gets pressed, quit the program
     key = cv2.waitKey(1) & 0xFF
     if key == ord('q'):
         break
@@ -279,5 +254,26 @@ cap.release()
 cv2.destroyAllWindows
 
 
-""" get real world pose from aruco marker """ 
+""" V2: get real world pose from aruco marker """ 
 """ https://www.youtube.com/watch?v=cIVZRuVdv1o """
+
+
+
+## Other version of communication with arduino
+"""
+emptyserial = -99   #add a controlling value
+def sendserial(idTag, x, y, heading):
+    #ser = serial.Serial('/dev/ttyUSB0', 9600, timeout=1) #ttyACM0 USB0 ls /dev/tty*
+    ser = serial.Serial('/dev/ttyACM0', 9600, timeout=1) #ttyACM0 USB0 ls /dev/tty*
+    ser.reset_input_buffer()
+    starttime = time.time()
+    endtime = time.time()
+    while endtime - starttime < 3:
+        print(endtime - starttime)
+        ser.write(("%d;%d;%d;%d;%d\n" % (emptyserial ,idTag,x, y, heading)).encode('utf-8'))
+        line = ser.readline().decode('utf-8', errors='replace').rstrip()
+        print(line)
+        #time.sleep(1)
+        endtime = time.time()
+    #return line
+"""

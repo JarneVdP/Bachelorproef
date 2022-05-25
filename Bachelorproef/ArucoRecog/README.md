@@ -10,11 +10,11 @@ Let's start at cam_cal.py and process.py.
 A camera lens is convex. We need to straighten the output of the camera. Print the checkerboard, run cam_cal.py which will take pictures. Take pictures of the flat checkerboard. Make sure all the pictures are clear. Run process.py. \
 Congrats, you found your camera matrix and distortion. It's saved as camera_cal.npy.
 
->What is the purpose of the Aruco_detect_V2.py program?
+>What is the purpose of the Aruco_detect_markers.py program?
 
-The Aruco_detect_V2.py program is used to detect the markers and to calculate the distance between the markers. When the markers are detected and the arduino asks for it, 'turn'is received, send the markerID, x distance, y distance (and heading altough it isn't used at this moment).
+The Aruco_detect_markers.py program is used to detect the markers and to calculate the distance between the markers. When the markers are detected and the arduino asks for it, 'turn'is received, send the markerID, x distance, y distance (and heading altough it isn't used at this moment).
 
 > How can I run it?
 
-Save everything locally on the raspberry pi. Locate the files in the folder. Go to the folder using cd .../.../ArucoRecog. Run the program using chmod +x Aruco_detect_V2.py, press enter. \
-type ./Aruco_detect_V2.py, enter to run the program.
+Save everything locally on the raspberry pi. Locate the files in the folder. Go to the folder using cd .../.../ArucoRecog. Run the program using chmod +x Aruco_detect_markers.py, press enter. \
+type ./Aruco_detect_markers.py, enter to run the program.
