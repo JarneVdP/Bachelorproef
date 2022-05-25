@@ -34,13 +34,20 @@ void recvWithStartEndMarkers() {
 void replyToPython() {
   if (newData == true) {
     Serial.print("<");
+    Serial.print("turn");
+    /*
     Serial.print(receivedChars);
     Serial.print("  , ");
     Serial.print(id_ard);
-    Serial.print("  , ");
+    Serial.print("  , x ");
     Serial.print(x_ard);
-    Serial.print("  , ");
+    Serial.print("  , y ");
     Serial.print(y_ard);
+    Serial.print("  , pos heading ");
+    Serial.print(Position.heading);
+     Serial.print("  , heading doel ");
+    Serial.print(heading_doel);
+    */
     Serial.print(">");
     newData = false;
   }

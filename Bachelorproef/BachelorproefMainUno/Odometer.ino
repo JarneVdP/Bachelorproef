@@ -38,7 +38,7 @@ void odometry(PositionStruct &Position) {
   newFront = -1* knobFront.read();
 
   //print encoder rotations
-  if(newLeft != prev_positionLeft || newRight != prev_positionRight || newFront != prev_positionFront){
+  /*if(newLeft != prev_positionLeft || newRight != prev_positionRight || newFront != prev_positionFront){
     Serial.print("<Left = ");
     Serial.print(newLeft);
     Serial.print(", Right = ");
@@ -46,7 +46,7 @@ void odometry(PositionStruct &Position) {
     Serial.print(", Front = ");
     Serial.print(newFront);
     Serial.println('>');
-  }
+  }*/
 
   //delta position
   delta_positionLeft = newLeft - prev_positionLeft;
@@ -77,7 +77,7 @@ void odometry(PositionStruct &Position) {
     Position.heading -= 6.2831853072;}
 
   //print current position
-  if(newLeft != prev_positionLeft || newRight != prev_positionRight || newFront != prev_positionFront){
+  /*if(newLeft != prev_positionLeft || newRight != prev_positionRight || newFront != prev_positionFront){
     Serial.print("<X pos = ");
     Serial.print(Position.x_pos);
     Serial.print(", Y pos = ");
@@ -86,7 +86,7 @@ void odometry(PositionStruct &Position) {
     Serial.print(Position.heading); Serial.print("   ");
     Serial.println(Position.heading * 180/ 3.14159265358979);
     Serial.println('>');
-  }
+  }*/
 
   //Old position
   prev_positionLeft = newLeft;
