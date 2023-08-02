@@ -3,7 +3,7 @@ Bachelorproef: Eurobot 2022
 
 >What?
 
-Code to control a robot which will take samples and store them by colour/ArucoId
+Code to control a robot which will take samples and store them by colour or Aruco Code/ID
 
 >What does it do?
 
